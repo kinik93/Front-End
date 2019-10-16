@@ -1,0 +1,72 @@
+<div class="container">
+    <div class="row">
+      <div class="col">
+        <div *ngIf="readyLoadedVideo">
+          <h1>Channel UUID: {{ videoService.getChannelSelected() }}</h1>
+          <h3>Loaded video</h3>
+          <ul class="list-group">
+            <div *ngFor="let video of loadedVideo.getVideos(); let i = index" [attr.data-index]="i">
+              <li class="list-group-item mr-2"
+                  style="display: inline-block; width: 40vw;"
+                  alt="ciao"
+                  (click)="onSelectVideo(video.getUUId(), i)">
+                  {{video.getTitle()}}
+              </li>
+              <div *ngIf="loadedVideo.getVideoInfo(i)">
+                <div class="videoStyle">
+                  <img  src="../../assets/video.jpeg"
+                        class="img-fluid"
+                        [title]="video.getDescription()">
+                  <div>
+                    <i  [ngStyle]="{color: loadedVideo.getLike(i)}"
+                        class="fas fa-thumbs-up mr-4"
+                        (click)="onLikeClick(i)">
+                    </i>
+                  </div>
+                  <input type="text" style="display: inline-block;" class="form-control w-50" placeholder="Comment" [(ngModel)]="loadedVideo.getComments()[i]">
+                  <input  class="btn btn-outline-primary btn-lg mb-1"
+                          type="button"
+                          value="Save"
+                          (click)="onCommentSave(i)">
+                </div>
+              </div>
+            </div>
+          </ul>
+        </div>
+        <div *ngIf="readyLikedVideo">
+          <h3>Liked video</h3>
+          <ul class="list-group">
+            <div *ngFor="let video of likedVideo.getVideos(); let i = index" [attr.data-index]="i">
+              <i class="fas fa-user" title="View the user channel" (click)="onChannelClick(video.getChannelUUId())"></i>
+              <li class="list-group-item mr-2"
+                  style="display: inline-block; width: 40vw;"
+                  alt="ciao"
+                  (click)="onSelectLikedVideo(video.getUUId(), i)">
+                  {{video.getTitle()}}
+              </li>
+              <div *ngIf="likedVideo.getVideoInfo(i)">
+                <div class="videoStyle">
+                  <img  src="../../assets/video.jpeg"
+                        class="img-fluid"
+                        [title]="video.getDescription()">
+                  <div>
+                    <i  [ngStyle]="{color: likedVideo.getLike(i)}"
+                        class="fas fa-thumbs-up mr-4"
+                        (click)="onLikedVideolike(i)">
+                    </i>
+                  </div>
+                  <input type="text" style="display: inline-block;" class="form-control w-50" placeholder="Comment" [(ngModel)]="likedVideo.getComments()[i]">
+                  <input  class="btn btn-outline-primary btn-lg mb-1"
+                          type="button"
+                          value="Save"
+                          (click)="onLikedVideoComment(i)">
+                </div>
+              </div>
+            </div>
+          </ul>
+        </div>
+      </div>
+      <div class="col-4 text-center">
+      </div>
+    </div>
+  </div>

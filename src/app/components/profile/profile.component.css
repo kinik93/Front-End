@@ -1,0 +1,24 @@
+@import url("https://use.fontawesome.com/releases/v5.7.0/css/all.css");
+
+*{
+  padding: 0.5%;
+}
+
+i {
+  padding: 1px;
+}
+
+.fa-user{
+  margin-right: 16px;
+}
+
+.formLogin{
+  margin-top: 16px;
+  margin-left: 5vw;
+  padding: 8px 24px;
+  background-image: linear-gradient(-45deg, #212326 , #3C4E59);
+  border: 2px solid black;
+  border-radius: 25px;
+}
+
+

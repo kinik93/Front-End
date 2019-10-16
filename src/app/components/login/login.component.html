@@ -1,0 +1,27 @@
+<div class="backdrop"></div>
+<div class="win-box">
+  <div class="text-center">
+    <h3>Login</h3>
+  </div>
+  <div>
+    <div class="form-group">
+      <input class="form-control input-md"
+      type="text"
+      style="width: 80%"
+      [(ngModel)]="username"
+      autofocus placeholder="Username">
+    </div>
+    <div class="form-group">
+      <input class="form-control input-md"
+      type="password"
+      style="width: 80%"
+      [(ngModel)]="password"
+      autofocus placeholder="Password">
+    </div>
+    <div>
+      <button type="submit" class="btn btn-primary mr-2" (click)="onLogin()">Login</button>
+      <button class="btn btn-danger" (click)="onCancelClick()">Cancel</button>
+    </div>
+  </div>
+</div>
+

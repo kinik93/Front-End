@@ -1,0 +1,47 @@
+<div class="container">
+  <div class="row">
+    <div class="col-9" *ngIf="ready">
+      Suggested video
+      <ul class="list-group">
+        <div *ngFor="let video of homeVideo.getVideos(); let i = index" [attr.data-index]="i">
+          <i  class="fas fa-user"
+              title="View the user channel"
+              (click)="onChannelClick(video.getChannelUUId())"></i>
+          <li class="list-group-item mr-2"
+              style="display: inline-block; width: 40vw;"
+              alt="ciao"
+              (click)="onVideoClick(homeVideo.getVideo(i).getUUId(), i)">
+              {{video.getTitle()}}
+          </li>
+          <div *ngIf="homeVideo.getVideoInfo(i)">
+            <div class="videoStyle">
+              <img  src="../../assets/video.jpeg"
+                  class="img-fluid"
+                  [title]="video.getDescription()">
+              <div style="margin-bottom: 8px;">
+                <i  [ngStyle]="{color: homeVideo.getLike(i)}"
+                    class="fas fa-thumbs-up mr-4"
+                    (click)="onLikeClick(i)">
+                </i>
+                <button *ngIf="!homeVideo.getSubscribe(i)" style="padding: 18px 32px; font-size: 16pt;"  type="button" class="btn btn-outline-danger">Subscribe</button>
+                <button *ngIf="homeVideo.getSubscribe(i)"style="padding: 18px 32px; font-size: 16pt;"  type="button" class="btn btn-outline-danger">Unsubscribe</button>
+              </div>
+              <input type="text" style="display: inline-block;" class="form-control w-50" placeholder="Comment" [(ngModel)]="homeVideo.getComments()[i]">
+              <input  class="btn btn-outline-primary btn-lg mb-1"
+                      type="button"
+                      value="Save"
+                      (click)="onCommentSave(i)">
+            </div>
+          </div>
+        </div>
+      </ul>
+    </div>
+    <div class="col-3">
+      Playlists
+      <div>
+        <img src="../../assets/video.jpeg" class="img-thumbnail">
+        <img src="../../assets/video.jpeg" class="img-thumbnail mt-3">
+      </div>
+    </div>
+  </div>
+</div>

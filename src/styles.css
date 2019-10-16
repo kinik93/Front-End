@@ -1,1 +1,13 @@
 /* You can add global styles to this file, and also import other style files */
+i:hover {
+  cursor: pointer;
+}
+
+li:hover {
+  cursor: pointer;
+}
+
+.btnLogin {
+  padding: 8px;
+}
+
