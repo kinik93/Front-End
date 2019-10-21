@@ -1,18 +1,21 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit, OnDestroy} from '@angular/core';
 import { VideoService } from 'src/app/services/video.service';
 import { ListVideo } from 'src/app/model/ListVideo.model';
 import { UserService } from 'src/app/services/user.service';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-video',
   templateUrl: './video.component.html',
   styleUrls: ['./video.component.css']
 })
-export class VideoComponent implements OnInit {
+export class VideoComponent implements OnInit, OnDestroy {
 
   searchedVideo: ListVideo;
   ready = false;
+
+  searchedVideoSubscription: Subscription;
 
   constructor(private videoService: VideoService,
               private userService: UserService,
@@ -20,24 +23,32 @@ export class VideoComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.videoService.searchedVideoEmitter.subscribe(resVideos => {
+    this.searchedVideoSubscription = this.videoService.searchedVideoEmitter.subscribe(resVideos => {
       this.searchedVideo = resVideos;
       this.ready = true;
-      console.log(this.searchedVideo);
+      console.log('Loaded searched videos: ', this.searchedVideo);
     });
   }
 
-  onSelectVideo(videoUUId: number, index: number) {
+  ngOnDestroy() {
+    this.searchedVideoSubscription.unsubscribe();
+  }
+
+  onSelectVideo(videoUUId: string, index: number) {
     console.log('Video selected: ', videoUUId);
     this.searchedVideo.changeVideoInfo(index);
     if (this.userService.getUser().getLogInfo()) {
-      this.videoService.getVideoInfo(videoUUId).subscribe( resData => {
+      this.videoService.getVideoInfoLoggedUser(videoUUId).subscribe( resData => {
         this.searchedVideo.setSubscribe(index, resData['subscribe']) ;
         if (resData['like']) {
           this.searchedVideo.setLike(index, 'blue');
         } else {
           this.searchedVideo.setLike(index, 'black');
         }
+      });
+    } else {
+      this.videoService.getVideoInfoExtUser(videoUUId).subscribe(resData => {
+        console.log(resData);
       });
     }
   }
@@ -60,10 +71,9 @@ export class VideoComponent implements OnInit {
     }
   }
 
-  onChannelClick(channelUUId: number) {
+  onChannelClick(channelUUId: string) {
     this.videoService.setChannelSelected(channelUUId);
     this.videoService.getChannelVideos();
-    this.videoService.getChannelLikedVideos();
     this.router.navigate(['channel']);
   }
 }

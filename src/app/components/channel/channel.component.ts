@@ -1,42 +1,43 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { VideoService } from 'src/app/services/video.service';
 import { Router } from '@angular/router';
 import { ListVideo } from 'src/app/model/ListVideo.model';
 import { UserService } from 'src/app/services/user.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-channel',
   templateUrl: './channel.component.html',
   styleUrls: ['./channel.component.css']
 })
-export class ChannelComponent implements OnInit {
+export class ChannelComponent implements OnInit, OnDestroy {
 
   loadedVideo: ListVideo;
   readyLoadedVideo = false;
-  likedVideo: ListVideo;
-  readyLikedVideo = false;
 
   constructor(private videoService: VideoService,
               private router: Router,
               private userService: UserService) { }
 
+  loadedVideoSubscription: Subscription;
+
   ngOnInit() {
-    this.videoService.channelLoadedVideoEmitter.subscribe(resVideos => {
+    this.loadedVideoSubscription = this.videoService.channelLoadedVideoEmitter.subscribe(resVideos => {
       this.loadedVideo = resVideos;
       this.readyLoadedVideo = true;
-    });
-
-    this.videoService.channelLikedVideoEmitter.subscribe(resVideos => {
-      this.likedVideo = resVideos;
-      this.readyLikedVideo = true;
+      console.log('Loaded channel videos: ', this.loadedVideo);
     });
   }
 
-  onSelectVideo(videoUUId: number, index: number) {
+  ngOnDestroy() {
+    this.loadedVideoSubscription.unsubscribe();
+  }
+
+  onSelectVideo(videoUUId: string, index: number) {
     console.log('Video selected: ', videoUUId);
     this.loadedVideo.changeVideoInfo(index);
     if (this.userService.getUser().getLogInfo()) {
-      this.videoService.getVideoInfo(videoUUId).subscribe( resData => {
+      this.videoService.getVideoInfoLoggedUser(videoUUId).subscribe( resData => {
         this.loadedVideo.setSubscribe(index, resData['subscribe']) ;
         if (resData['like']) {
           this.loadedVideo.setLike(index, 'blue');
@@ -44,20 +45,9 @@ export class ChannelComponent implements OnInit {
           this.loadedVideo.setLike(index, 'black');
         }
       });
-    }
-  }
-
-  onSelectLikedVideo(videoUUId: number, index: number) {
-    console.log('Video selected: ', videoUUId);
-    this.likedVideo.changeVideoInfo(index);
-    if (this.userService.getUser().getLogInfo()) {
-      this.videoService.getVideoInfo(videoUUId).subscribe( resData => {
-        this.likedVideo.setSubscribe(index, resData['subscribe']) ;
-        if (resData['like']) {
-          this.likedVideo.setLike(index, 'blue');
-        } else {
-          this.likedVideo.setLike(index, 'black');
-        }
+    } else {
+      this.videoService.getVideoInfoExtUser(videoUUId).subscribe(resData => {
+        console.log(resData);
       });
     }
   }
@@ -80,20 +70,10 @@ export class ChannelComponent implements OnInit {
     }
   }
 
-  onLikedVideoComment(index: number) {
-    console.log('prova comment');
-  }
 
-  onLikedVideolike(index: number) {
-    console.log('prova like');
-  }
-
-
-  onChannelClick(channelUUId: number) {
+  onChannelClick(channelUUId: string) {
     this.videoService.setChannelSelected(channelUUId);
     this.videoService.getChannelVideos();
-    this.videoService.getChannelLikedVideos();
-    //this.router.navigate(['channel']);
   }
 
 }

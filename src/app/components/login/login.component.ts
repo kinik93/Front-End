@@ -14,16 +14,20 @@ export class LoginComponent implements OnInit {
   private username = '';
   private password = '';
 
+  isLoading: boolean;
+
   constructor(private userService: UserService,
               private videoService: VideoService,
               private router: Router,
               private location: Location) { }
 
   ngOnInit() {
+    this.isLoading = false;
   }
 
   onLogin() {
     if (this.userService.getUser().getLogInfo() === false) {
+      this.isLoading = true;
       this.userService.checkLogUser(this.username, this.password).subscribe( tmpUserLogged => {
         console.log(tmpUserLogged);
         let userLogged =  new User(tmpUserLogged['username'],
@@ -34,18 +38,19 @@ export class LoginComponent implements OnInit {
         if (userLogged.getLogInfo()) {
           console.log('ok');
           this.userService.usernameEmitter.next(userLogged.getUsername());
+          this.isLoading = false;
         } else {
           console.log('fail');
           alert('Login failed');
+          this.isLoading = false;
         }
-        // this.location.back();
-        this.router.navigate(['']);
+        this.goBack();
       },
       error => {
         alert('Login failed, connection error');
         console.log('Errore: ', error);
-        // this.location.back();
-        this.router.navigate(['']);
+        this.isLoading = false;
+        this.goBack();
       });
       this.username = '';
       this.password = '';
@@ -55,12 +60,17 @@ export class LoginComponent implements OnInit {
   }
 
   onCancelClick() {
-    this.videoService.searchVideos();
+    this.goBack();
+  }
 
-    // this.location.back();  TODO: sarebbe da usare questa, ma non funziona perchè quando
-    //                              indietro non ricarica correttamente i video
-
-    this.router.navigate(['']);
+  goBack() {
+    if (typeof this.videoService.getInputSearchText() !== "undefined") {
+      this.videoService.searchVideos();
+    }
+    if (typeof this.videoService.getChannelSelected() !== "undefined") {
+      this.videoService.getChannelVideos();
+    }
+    this.location.back();
   }
 
 }

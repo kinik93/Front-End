@@ -9,6 +9,8 @@ import { User } from '../model/user.model';
 })
 export class UserService {
 
+  API_ENDPOINT_URL = 'http://172.18.216.66:8080/backend/services/users';
+
   usernameEmitter = new Subject<string>();
   private loggedUser: User;
 
@@ -32,8 +34,11 @@ export class UserService {
 
   checkLogUser(username: string, password: string) {
     const md5 = new Md5();
-    return this.http.get<User>('http://10.168.2.115:8080/backend/services/login/?username='
-        + username + '&psw=' + md5.appendStr(password).end());
+    const userAuth_url =  this.API_ENDPOINT_URL +
+                          '/login/?username=' + username +
+                          '&psw=' + md5.appendStr(password).end();
+    console.log(userAuth_url);
+    return this.http.get<User>(userAuth_url);
   }
 
 }

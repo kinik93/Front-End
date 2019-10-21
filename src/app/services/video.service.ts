@@ -12,16 +12,19 @@ import { ListVideo } from '../model/ListVideo.model';
 })
 export class VideoService {
 
+  API_ENDPOINT_URL = 'http://172.18.216.66:8080/backend/services';
+
   private channelSelected: string;
   private inputSearchText: string;
 
   searchedVideoEmitter = new Subject<ListVideo>();
   channelLoadedVideoEmitter = new Subject<ListVideo>();
-  channelLikedVideoEmitter = new Subject<ListVideo>();
   profileLoadedVideoEmitter = new Subject<ListVideo>();
   profileSubVideoEmitter = new Subject<ListVideo>();
 
   constructor(private http: HttpClient, private userService: UserService) { }
+
+  // Methods for setting variable passed between pages
 
   getChannelSelected() {
     return this.channelSelected;
@@ -39,30 +42,27 @@ export class VideoService {
     this.inputSearchText = searchtxt;
   }
 
+  // Methods for getting videos in each page
+
   getRandomVideos() {
     if (this.userService.getUser().getLogInfo()) {
-      return this.http.get<Video[]>('http://localhost:3000/video1.json');
+      return this.http.get<Video[]>(this.API_ENDPOINT_URL.concat('/videos/random'));
     } else {
-      return this.http.get<Video[]>('http://localhost:3000/video1.json');
+      return this.http.get<Video[]>(this.API_ENDPOINT_URL.concat('/videos/random'));
     }
   }
 
-  getVideoInfo(videoUUID) {
-    console.log('Get info for video: ', videoUUID, ' for user: ', this.userService.getUser().getUuid());
-    return this.http.get('http://localhost:3000/info.json');
-  }
-
   searchVideos() {
-    console.log('Ricerca: ', this.inputSearchText);
-    const requestUrl = 'http://localhost:3000/'.concat(this.inputSearchText);
+    console.log('Search for: ', this.inputSearchText);
+    const requestUrl = this.API_ENDPOINT_URL.concat('/videos/search?query=').concat(this.inputSearchText);
     this.http.get<Video[]>(requestUrl)
     .pipe(map(resVideos => {
       const videos = [];
       for (const item of resVideos) {
         videos.push(new Video(item['uuid'],
                               item['name'],
-                              item['description'],
-                              item['chUUID']));
+                              item['videoDescriptor'],
+                              item['channel']['uuid']));
       }
       return videos;
     }))
@@ -73,39 +73,22 @@ export class VideoService {
 
   getChannelVideos() {
     console.log('Ottieni video del canale: ', this.channelSelected);
-    const requestUrl = 'http://localhost:3000/'.concat('video1.json');
+    const requestUrl =  this.API_ENDPOINT_URL
+                        .concat('/channel/viewchannel/?chUUID=')
+                        .concat(this.channelSelected);
     this.http.get<Video[]>(requestUrl)
     .pipe(map(resVideos => {
       const videos = [];
       for (const item of resVideos) {
         videos.push(new Video(item['uuid'],
                               item['name'],
-                              item['description'],
-                              item['chUUID']));
+                              item['videoDescriptor'],
+                              item['channel']['uuid']));
       }
       return videos;
     }))
     .subscribe(resVideos => {
       this.channelLoadedVideoEmitter.next(new ListVideo(resVideos));
-    });
-  }
-
-  getChannelLikedVideos() {
-    console.log('Ottieni video del canale: ', this.channelSelected);
-    const requestUrl = 'http://localhost:3000/'.concat('video2.json');
-    this.http.get<Video[]>(requestUrl)
-    .pipe(map(resVideos => {
-      const videos = [];
-      for (const item of resVideos) {
-        videos.push(new Video(item['uuid'],
-                              item['name'],
-                              item['description'],
-                              item['chUUID']));
-      }
-      return videos;
-    }))
-    .subscribe(resVideos => {
-      this.channelLikedVideoEmitter.next(new ListVideo(resVideos));
     });
   }
 
@@ -118,8 +101,8 @@ export class VideoService {
       for (const item of resVideos) {
         videos.push(new Video(item['uuid'],
                               item['name'],
-                              item['description'],
-                              item['chUUID']));
+                              item['videoDescriptor'],
+                              item['channel']['uuid']));
       }
       return videos;
     }))
@@ -136,8 +119,8 @@ export class VideoService {
       for (const item of resVideos) {
         videos.push(new Video(item['uuid'],
                               item['name'],
-                              item['description'],
-                              item['chUUID']));
+                              item['videoDescriptor'],
+                              item['channel']['uuid']));
       }
       return videos;
     }))
@@ -146,12 +129,57 @@ export class VideoService {
     });
   }
 
-  saveCommentOnVideo(videoId: string, comment: string) {
-    console.log('Saving ', comment, 'on video ', videoId);
-    // this.http.get('').subscribe(resData => {});
+  // Methods for getting information for each video
+
+  getVideoInfoLoggedUser(videoUUID: string) {
+    console.log('Get info for video: ', videoUUID, ' for user: ', this.userService.getUser().getUuid());
+    const videoInfoUrl = this.API_ENDPOINT_URL.concat('/videos/watch?videoUUID=')
+                          .concat(videoUUID).concat('&usrUUID=')
+                          .concat(this.userService.getUser().getUuid());
+    return this.http.get(videoInfoUrl);
   }
 
+  getVideoInfoExtUser(videoUUID: string) {
+    console.log('Get info for video: ', videoUUID, ' for external user');
+    const videoInfoUrl = this.API_ENDPOINT_URL.concat('/videos/watch?videoUUID=')
+                          .concat(videoUUID);
+    return this.http.get(videoInfoUrl);
+  }
 
+  saveLikeOnVideo(videoUUID: string, listVideo: ListVideo, index: number) {
+    if (this.userService.getUser().getLogInfo()) {
+      const likeUrl = this.API_ENDPOINT_URL + '/videos/like/?videoUUID=' + videoUUID +
+                                              '&usrUUID=' + this.userService.getUser().getUuid();
+      this.http.get(likeUrl).subscribe(resData => {
+        (resData['like'] === 'true') ? listVideo.setLike(index, 'blue') : listVideo.setLike(index, 'black');
+      }, error => {
+        console.log(error);
+      });
+    }
+  }
+
+  saveCommentOnVideo(videoUUId: string, comment: string) {
+    console.log('Saving ', comment, 'on video ', videoUUId);
+    const commentUrl = this.API_ENDPOINT_URL +  '/videos/comment/?videoUUID=' + videoUUId +
+                                                '&usrUUID=' + this.userService.getUser().getUuid() +
+                                                '&comment=' + comment;
+    this.http.get(commentUrl).subscribe(resData => {
+      console.log(resData);
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  subscribeOnChannel(chUUID: string, listVideo: ListVideo, index: number) {
+    const subscribeURL = this.API_ENDPOINT_URL +  '/channel/subscribe/?chUUID=' + chUUID +
+                         '&usrUUID=' + this.userService.getUser().getUuid();
+    this.http.get(subscribeURL).subscribe(resData => {
+      console.log(resData);
+      listVideo.setSubscribe(index, !listVideo.getSubscribe(index));
+    }, error => {
+      console.log(error);
+    });
+  }
 
 
 }

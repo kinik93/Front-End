@@ -67,10 +67,9 @@ export class ProfileComponent implements OnInit {
     console.log('Commenta sub')
   }
 
-  onChannelClick(channelUUId: number) {
+  onChannelClick(channelUUId: string) {
     this.videoService.setChannelSelected(channelUUId);
     this.videoService.getChannelVideos();
-    this.videoService.getChannelLikedVideos();
     this.router.navigate(['channel']);
   }
 }
