@@ -12,7 +12,7 @@ import { ListVideo } from '../model/ListVideo.model';
 })
 export class VideoService {
 
-  API_ENDPOINT_URL = 'http://172.18.216.66:8080/backend/services';
+  API_ENDPOINT_URL = 'http://172.18.222.106:8080/backend/services';
 
   private channelSelected: string;
   private inputSearchText: string;

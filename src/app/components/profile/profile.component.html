@@ -1,6 +1,9 @@
 <div class="container">
     <div class="row">
       <div class="col">
+        <div>
+          <h3>Channel subscribed</h3>
+        </div>
         <div *ngIf="readyMyVideos">
           <h3>My videos</h3>
           <ul class="list-group">
@@ -8,7 +11,7 @@
               <li class="list-group-item mr-2"
                   style="display: inline-block; width: 40vw;"
                   alt="ciao"
-                  (click)="onSelectProfileVideo(video.getUUId(), i)">
+                  (click)="onVideoClick(video.getUUId(), i)">
                   {{video.getTitle()}}
               </li>
               <div *ngIf="myVideos.getVideoInfo(i)">
@@ -19,48 +22,14 @@
                   <div>
                     <i  [ngStyle]="{color: myVideos.getLike(i)}"
                         class="fas fa-thumbs-up mr-4"
-                        (click)="onMyVideoLikeClick(i)">
+                        (click)="onLikeClick(video.getUUId(), i)">
                     </i>
                   </div>
                   <input type="text" style="display: inline-block;" class="form-control w-50" placeholder="Comment" [(ngModel)]="myVideos.getComments()[i]">
                   <input  class="btn btn-outline-primary btn-lg mb-1"
                           type="button"
                           value="Save"
-                          (click)="onMyVideoCommentSave(i)">
-                </div>
-              </div>
-            </div>
-          </ul>
-        </div>
-        <div *ngIf="readySubscVideos">
-          <h3>my subscriptions</h3>
-          <ul class="list-group">
-            <div *ngFor="let video of mySubscVideos.getVideos(); let i = index" [attr.data-index]="i">
-              <i  class="fas fa-user"
-                  title="View the user channel"
-                  (click)="onChannelClick(video.getChannelUUId())"></i>
-              <li class="list-group-item mr-2"
-                  style="display: inline-block; width: 40vw;"
-                  alt="ciao"
-                  (click)="onSelectSubVideo(mySubscVideos.getVideo(i).getUUId(), i)">
-                  {{video.getTitle()}}
-              </li>
-              <div *ngIf="mySubscVideos.getVideoInfo(i)">
-                <div class="videoStyle">
-                  <img  src="../../assets/video.jpeg"
-                      class="img-fluid"
-                      [title]="video.getDescription()">
-                  <div style="margin-bottom: 8px;">
-                    <i  [ngStyle]="{color: mySubscVideos.getLike(i)}"
-                        class="fas fa-thumbs-up mr-4"
-                        (click)="onSubVideoLikeClick(i)">
-                    </i>
-                  </div>
-                  <input type="text" style="display: inline-block;" class="form-control w-50" placeholder="Comment" [(ngModel)]="mySubscVideos.getComments()[i]">
-                  <input  class="btn btn-outline-primary btn-lg mb-1"
-                          type="button"
-                          value="Save"
-                          (click)="onSubVideoCommentSave(i)">
+                          (click)="onCommentSaves(video.getUUId(), i)">
                 </div>
               </div>
             </div>

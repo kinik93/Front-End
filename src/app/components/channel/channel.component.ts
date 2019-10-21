@@ -15,11 +15,15 @@ export class ChannelComponent implements OnInit, OnDestroy {
   loadedVideo: ListVideo;
   readyLoadedVideo = false;
 
+  loadedVideoSubscription: Subscription;
+
   constructor(private videoService: VideoService,
               private router: Router,
               private userService: UserService) { }
 
-  loadedVideoSubscription: Subscription;
+  // *******************
+  // List video subscribing and operations
+  // *******************
 
   ngOnInit() {
     this.loadedVideoSubscription = this.videoService.channelLoadedVideoEmitter.subscribe(resVideos => {
@@ -33,47 +37,49 @@ export class ChannelComponent implements OnInit, OnDestroy {
     this.loadedVideoSubscription.unsubscribe();
   }
 
-  onSelectVideo(videoUUId: string, index: number) {
-    console.log('Video selected: ', videoUUId);
+  // *******************
+  // Single video operations
+  // *******************
+
+  onVideoClick(videoUuid: string, index: number) {
     this.loadedVideo.changeVideoInfo(index);
+    console.log('Video clicked: ', videoUuid);
     if (this.userService.getUser().getLogInfo()) {
-      this.videoService.getVideoInfoLoggedUser(videoUUId).subscribe( resData => {
-        this.loadedVideo.setSubscribe(index, resData['subscribe']) ;
-        if (resData['like']) {
-          this.loadedVideo.setLike(index, 'blue');
-        } else {
-          this.loadedVideo.setLike(index, 'black');
-        }
+      this.videoService.getVideoInfoLoggedUser(videoUuid).subscribe( resData => {
+        console.log(resData);
+        (resData['subscribe'] === 'true') ? this.loadedVideo.setSubscribe(index, true) : this.loadedVideo.setSubscribe(index, false);
+        (resData['like'] === 'true') ? this.loadedVideo.setLike(index, 'blue') : this.loadedVideo.setLike(index, 'black');
       });
     } else {
-      this.videoService.getVideoInfoExtUser(videoUUId).subscribe(resData => {
+      this.videoService.getVideoInfoExtUser(videoUuid).subscribe(resData => {
         console.log(resData);
       });
     }
   }
 
-  onCommentSave(index: number) {
+  onCommentSave(videoUUID: string, index: number) {
     if (this.userService.getUser().getLogInfo()) {
-      console.log('Save comment: ', this.loadedVideo.getComments()[index]);
+      this.videoService.saveCommentOnVideo(videoUUID, this.loadedVideo.getComments()[index]);
+      this.loadedVideo.getComments()[index] = '';
     } else {
       alert('You must be logged to comment');
     }
   }
 
-  onLikeClick(index: number) {
+  onLikeClick(videoUUID: string, index: number) {
     if (this.userService.getUser().getLogInfo()) {
-      (this.loadedVideo.getLike(index) === 'black') ?
-        (this.loadedVideo.setLike(index, 'blue')) :
-        (this.loadedVideo.setLike(index, 'black'));
+      this.videoService.saveLikeOnVideo(videoUUID, this.loadedVideo, index);
     } else {
-      alert('You must be logged to like the videos');
+      alert('You must be logged to like the video');
     }
   }
 
-
-  onChannelClick(channelUUId: string) {
-    this.videoService.setChannelSelected(channelUUId);
-    this.videoService.getChannelVideos();
+  onSubscribeClick(channelUUID: string, index: number) {
+    if (this.userService.getUser().getLogInfo()) {
+      this.videoService.subscribeOnChannel(channelUUID, this.loadedVideo, index);
+    } else {
+      alert('You must be logged to subscribe to the channel');
+    }
   }
 
 }

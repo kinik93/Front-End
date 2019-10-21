@@ -8,7 +8,7 @@
           <li class="list-group-item mr-2"
               style="display: inline-block; width: 40vw;"
               alt="ciao"
-              (click)="onSelectVideo(video.getUUId(), i)">
+              (click)="onVideoClick(video.getUUId(), i)">
               {{video.getTitle()}}
           </li>
           <div *ngIf="searchedVideo.getVideoInfo(i)">
@@ -19,15 +19,23 @@
                 <div>
                   <i  [ngStyle]="{color: searchedVideo.getLike(i)}"
                       class="fas fa-thumbs-up mr-4"
-                      (click)="onLikeClick(i)"></i>
-                  <button *ngIf="!searchedVideo.getSubscribe(i)" style="padding: 18px 32px; font-size: 16pt;"  type="button" class="btn btn-outline-danger">Subscribe</button>
-                  <button *ngIf="searchedVideo.getSubscribe(i)"style="padding: 18px 32px; font-size: 16pt;"  type="button" class="btn btn-outline-danger">Unsubscribe</button>
+                      (click)="onLikeClick(video.getUUId(), i)"></i>
+                  <button *ngIf="!searchedVideo.getSubscribe(i)"
+                          style="padding: 18px 32px; font-size: 16pt;"
+                          type="button"
+                          class="btn btn-outline-danger"
+                          (click)="onSubscribeClick(video.getChannelUUId(), i)">Subscribe</button>
+                  <button *ngIf="searchedVideo.getSubscribe(i)"
+                          style="padding: 18px 32px; font-size: 16pt;"
+                          type="button"
+                          class="btn btn-outline-danger"
+                          (click)="onSubscribeClick(video.getChannelUUId(), i)">Unsubscribe</button>
                 </div>
                 <input type="text" style="display: inline-block;" class="form-control w-50" placeholder="Comment" [(ngModel)]="searchedVideo.getComments()[i]">
                 <input  class="btn btn-outline-primary btn-lg mb-1"
                         type="button"
                         value="Save"
-                        (click)="onCommentSave(i)">
+                        (click)="onCommentSave(video.getUUId(), i)">
             </div>
           </div>
         </div>
