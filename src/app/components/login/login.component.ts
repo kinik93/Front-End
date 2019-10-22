@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../services/user.service';
 import { User } from '../../model/user.model';
-import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { VideoService } from 'src/app/services/video.service';
 
@@ -18,7 +17,6 @@ export class LoginComponent implements OnInit {
 
   constructor(private userService: UserService,
               private videoService: VideoService,
-              private router: Router,
               private location: Location) { }
 
   ngOnInit() {
@@ -70,6 +68,7 @@ export class LoginComponent implements OnInit {
     if (typeof this.videoService.getChannelSelected() !== "undefined") {
       this.videoService.getChannelVideos();
     }
+
     this.location.back();
   }
 

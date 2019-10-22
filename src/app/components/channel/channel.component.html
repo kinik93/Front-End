@@ -2,7 +2,7 @@
     <div class="row">
       <div class="col">
         <div *ngIf="readyLoadedVideo">
-          <h1>Channel UUID: {{ videoService.getChannelSelected() }}</h1>
+          <h1>Channel UUID: {{ videoService.getChannelSelected() | slice:0:12 }} ...</h1>
           <h3>Loaded video</h3>
           <ul class="list-group">
             <div *ngFor="let video of loadedVideo.getVideos(); let i = index" [attr.data-index]="i">

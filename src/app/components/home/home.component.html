@@ -1,7 +1,7 @@
 <div class="container">
   <div class="row">
     <div class="col-9" *ngIf="ready">
-      Suggested video
+      <h3>Suggested video</h3>
       <ul class="list-group">
         <div *ngFor="let video of homeVideo.getVideos(); let i = index" [attr.data-index]="i">
           <i  class="fas fa-user"
@@ -43,7 +43,7 @@
       </ul>
     </div>
     <div class="col-3">
-      Advertisements
+      <h5>Advertisements</h5>
       <div>
         <img src="../../assets/video.jpeg" class="img-thumbnail">
         <img src="../../assets/video.jpeg" class="img-thumbnail mt-3">

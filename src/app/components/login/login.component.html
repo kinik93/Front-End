@@ -10,6 +10,8 @@
       type="text"
       style="width: 80%"
       [(ngModel)]="username"
+      (keydown.enter)="onLogin()"
+      (keydown.esc)="onCancelClick()"
       autofocus placeholder="Username">
     </div>
     <div class="form-group">
@@ -17,6 +19,8 @@
       type="password"
       style="width: 80%"
       [(ngModel)]="password"
+      (keydown.enter)="onLogin()"
+      (keydown.esc)="onCancelClick()"
       autofocus placeholder="Password">
     </div>
     <div>

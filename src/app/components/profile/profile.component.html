@@ -3,6 +3,18 @@
       <div class="col">
         <div>
           <h3>Channel subscribed</h3>
+          <div class="container-fluid">
+            <div class="row flex-row flex-nowrap">
+              <div *ngFor="let channel of myChannelList">
+                <div  class="card"
+                      style="width: 5vw; padding: 1px; cursor: pointer;"
+                      (click)="onChannelClick(channel.chUUID)">
+                  <img src="../../../assets/USER-LOGO.png" class="card-img-top">
+                  {{channel.chUUID | slice:0:5}}...
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <div *ngIf="readyMyVideos">
           <h3>My videos</h3>

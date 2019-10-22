@@ -17,6 +17,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   myVideos: ListVideo;
   readyMyVideos = false;
+  myChannelList: {chUUID: string, chOwner: string}[] =  [];
 
   myVideosSubscription: Subscription;
 
@@ -37,11 +38,15 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.readyMyVideos = true;
         console.log('Loaded channel videos: ', this.myVideos);
       });
+
+      this.listMyChannels();
     }
   }
 
   ngOnDestroy() {
-    this.myVideosSubscription.unsubscribe();
+    if (this.userService.getUser().getLogInfo()) {
+      this.myVideosSubscription.unsubscribe();
+    }
   }
 
   // *******************
@@ -81,9 +86,34 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Uploading video feature
+  // ******************
+  // Profile functionalities
+  // ******************
 
   uploadVideo() {
-    console.log('upload video', this.videoDescription, this.videoTitle);
+    if (this.userService.getUser().getLogInfo()) {
+      this.videoService.uploadVideo(this.videoTitle,
+                                    this.videoDescription,
+                                    this.userService.getUser().getUuid());
+    } else {
+      alert('You must be logged to upload a video');
+    }
+  }
+
+  listMyChannels() {
+    this.videoService.viewMyChannels(this.userService.getUser().getUuid())
+    .subscribe(resCh => {
+      for (const chItem of resCh) {
+        this.myChannelList.push({chUUID: chItem['uuid'], chOwner: chItem['owner']});
+      }
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  onChannelClick(channelUUId: string) {
+    this.videoService.setChannelSelected(channelUUId);
+    this.videoService.getChannelVideos();
+    this.router.navigate(['channel']);
   }
 }

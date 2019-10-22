@@ -12,7 +12,7 @@ import { ListVideo } from '../model/ListVideo.model';
 })
 export class VideoService {
 
-  API_ENDPOINT_URL = 'http://172.18.222.106:8080/backend/services';
+  API_ENDPOINT_URL = 'http://127.0.0.1:8080/backend/services';
 
   private channelSelected: string;
   private inputSearchText: string;
@@ -20,7 +20,6 @@ export class VideoService {
   searchedVideoEmitter = new Subject<ListVideo>();
   channelLoadedVideoEmitter = new Subject<ListVideo>();
   profileLoadedVideoEmitter = new Subject<ListVideo>();
-  profileSubVideoEmitter = new Subject<ListVideo>();
 
   constructor(private http: HttpClient, private userService: UserService) { }
 
@@ -94,7 +93,7 @@ export class VideoService {
 
   getProfileVideos() {
     console.log('Ottieni video utente: ', this.userService.getUser().getUsername());
-    const requestUrl = 'http://localhost:3000/'.concat('video2.json');
+    const requestUrl = this.API_ENDPOINT_URL; // TODO: endpoint da definire?
     this.http.get<Video[]>(requestUrl)
     .pipe(map(resVideos => {
       const videos = [];
@@ -108,24 +107,6 @@ export class VideoService {
     }))
     .subscribe(resVideos => {
       this.profileLoadedVideoEmitter.next(new ListVideo(resVideos));
-    });
-  }
-
-  getProfileSubscVideos() {
-    const requestUrl = 'http://localhost:3000/'.concat('video2.json');
-    this.http.get<Video[]>(requestUrl)
-    .pipe(map(resVideos => {
-      const videos = [];
-      for (const item of resVideos) {
-        videos.push(new Video(item['uuid'],
-                              item['name'],
-                              item['videoDescriptor'],
-                              item['channel']['uuid']));
-      }
-      return videos;
-    }))
-    .subscribe(resVideos => {
-      this.profileSubVideoEmitter.next(new ListVideo(resVideos));
     });
   }
 
@@ -181,5 +162,25 @@ export class VideoService {
     });
   }
 
+  // *****************
+  // Profile functionalities
+  // *****************
+
+  uploadVideo(videoName, videoDescriptor, userUUID) {
+    const uploadURL = this.API_ENDPOINT_URL + '/channel/uploadvideo/?' +
+                      'videoname=' + videoName +
+                      'descriptor=' + videoDescriptor;
+    return this.http.get(uploadURL).subscribe(resData => {
+      console.log(resData);
+    }, error => {
+      console.log(error);
+    });
+  }
+
+  viewMyChannels(userUUID: string) {
+    const listChUrl = this.API_ENDPOINT_URL + '/users/followedChannels/?' +
+                      'usrUUID=' + userUUID;
+    return this.http.get<{chUUID: string, chName: string}[]>(listChUrl);
+  }
 
 }

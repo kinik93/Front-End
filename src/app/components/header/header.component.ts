@@ -30,7 +30,6 @@ export class HeaderComponent implements OnInit {
   onProfileClick() {
     if (this.userService.getUser().getLogInfo()) {
       this.videoService.getProfileVideos();
-      this.videoService.getProfileSubscVideos();
       this.viewModal = false;
       this.router.navigate(['profile']);
     } else {
@@ -50,7 +49,7 @@ export class HeaderComponent implements OnInit {
     this.userService.setExternalUser();
     this.userService.usernameEmitter.next('Unknown');
     this.viewModal = false;
-    this.router.navigate(['login']);
+    this.router.navigate(['']);
   }
 
   onSearchClick() {
