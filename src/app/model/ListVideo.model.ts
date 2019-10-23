@@ -3,6 +3,7 @@ import { Video } from './video.model';
 export class ListVideo {
   private toogleLike: string[] = [];
   private toogleSubscribe: boolean[] = [];
+  private isSubscribable: boolean[] = [];
   private viewVideoInfo: boolean[] = [];
   private videos: Video[] = [];
   private comments: string[] = [];
@@ -16,6 +17,7 @@ export class ListVideo {
     for (let i = 0; i < this.videos.length; i++) {
       this.viewVideoInfo[i] = false;
       this.comments[i] = '';
+      this.isSubscribable[i] = false;
       this.toogleLike[i] = 'black';
       this.toogleSubscribe[i] = false;
     }
@@ -35,6 +37,14 @@ export class ListVideo {
 
   setLike(i, col) {
     this.toogleLike[i] = col;
+  }
+
+  getIsSubscribable(i) {
+    return this.isSubscribable[i];
+  }
+
+  setIsSubscribable(i, newValue) {
+    this.isSubscribable[i] = newValue;
   }
 
   getSubscribe(i) {

@@ -30,7 +30,8 @@ export class LoginComponent implements OnInit {
         console.log(tmpUserLogged);
         let userLogged =  new User(tmpUserLogged['username'],
                                     tmpUserLogged['status'],
-                                    tmpUserLogged['uuid']);
+                                    tmpUserLogged['uuid'],
+                                    tmpUserLogged['chUUID']);
         this.userService.setUser(userLogged);
         console.log(userLogged.getLogInfo());
         if (userLogged.getLogInfo()) {

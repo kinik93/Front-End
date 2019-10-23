@@ -41,15 +41,19 @@ export class ChannelComponent implements OnInit, OnDestroy {
   // Single video operations
   // *******************
 
-  onVideoClick(videoUuid: string, index: number) {
+  onVideoClick(videoUuid: string, index: number, chUUID: string) {
     this.loadedVideo.changeVideoInfo(index);
     console.log('Video clicked: ', videoUuid);
     if (this.userService.getUser().getLogInfo()) {
-      this.videoService.getVideoInfoLoggedUser(videoUuid).subscribe( resData => {
-        console.log(resData);
-        (resData['subscribe'] === 'true') ? this.loadedVideo.setSubscribe(index, true) : this.loadedVideo.setSubscribe(index, false);
-        (resData['like'] === 'true') ? this.loadedVideo.setLike(index, 'blue') : this.loadedVideo.setLike(index, 'black');
-      });
+      if (this.userService.getUser().getChUUID() === chUUID) {
+        this.loadedVideo.setIsSubscribable(index, true);
+      } else {
+        this.videoService.getVideoInfoLoggedUser(videoUuid).subscribe( resData => {
+          console.log(resData);
+          (resData['subscribe'] === 'true') ? this.loadedVideo.setSubscribe(index, true) : this.loadedVideo.setSubscribe(index, false);
+          (resData['like'] === 'true') ? this.loadedVideo.setLike(index, 'blue') : this.loadedVideo.setLike(index, 'black');
+        });
+      }
     } else {
       this.videoService.getVideoInfoExtUser(videoUuid).subscribe(resData => {
         console.log(resData);

@@ -12,7 +12,7 @@ import { ListVideo } from '../model/ListVideo.model';
 })
 export class VideoService {
 
-  API_ENDPOINT_URL = 'http://127.0.0.1:8080/backend/services';
+  API_ENDPOINT_URL = 'http://10.168.2.115:8080/backend/services';
 
   private channelSelected: string;
   private inputSearchText: string;
@@ -92,8 +92,9 @@ export class VideoService {
   }
 
   getProfileVideos() {
-    console.log('Ottieni video utente: ', this.userService.getUser().getUsername());
-    const requestUrl = this.API_ENDPOINT_URL; // TODO: endpoint da definire?
+    console.log('Ottieni video utente: ', this.userService.getUser());
+    const requestUrl =  this.API_ENDPOINT_URL + '/channel/viewchannel/?' +
+                        'chUUID=' + this.userService.getUser().getChUUID();
     this.http.get<Video[]>(requestUrl)
     .pipe(map(resVideos => {
       const videos = [];
@@ -169,11 +170,14 @@ export class VideoService {
   uploadVideo(videoName, videoDescriptor, userUUID) {
     const uploadURL = this.API_ENDPOINT_URL + '/channel/uploadvideo/?' +
                       'videoname=' + videoName +
-                      'descriptor=' + videoDescriptor;
+                      '&descriptor=' + videoDescriptor +
+                      '&channelUUID=' + this.userService.getUser().getChUUID();
     return this.http.get(uploadURL).subscribe(resData => {
       console.log(resData);
     }, error => {
       console.log(error);
+    }, () => {
+      alert('Video uploaded');
     });
   }
 

@@ -10,7 +10,7 @@
           <li class="list-group-item mr-2"
               style="display: inline-block; width: 40vw;"
               alt="ciao"
-              (click)="onVideoClick(homeVideo.getVideo(i).getUUId(), i)">
+              (click)="onVideoClick(video.getUUId(), i, video.getChannelUUId())">
               {{video.getTitle()}}
           </li>
           <div *ngIf="homeVideo.getVideoInfo(i)">
@@ -26,10 +26,12 @@
                 <button *ngIf="!homeVideo.getSubscribe(i)"
                         style="padding: 18px 32px; font-size: 16pt;"
                         type="button" class="btn btn-outline-danger"
+                        [disabled]="homeVideo.getIsSubscribable(i)"
                         (click)="onSubscribeClick(video.getChannelUUId(), i)">Subscribe</button>
                 <button *ngIf="homeVideo.getSubscribe(i)"
                         style="padding: 18px 32px; font-size: 16pt;"
                         type="button" class="btn btn-outline-danger"
+                        [disabled]="homeVideo.getIsSubscribable(i)"
                         (click)="onSubscribeClick(video.getChannelUUId(), i)">Unsubscribe</button>
               </div>
               <input type="text" style="display: inline-block;" class="form-control w-50" placeholder="Comment" [(ngModel)]="homeVideo.getComments()[i]">

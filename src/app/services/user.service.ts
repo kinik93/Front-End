@@ -9,7 +9,7 @@ import { User } from '../model/user.model';
 })
 export class UserService {
 
-  API_ENDPOINT_URL = 'http://127.0.0.1:8080/backend/services/users';
+  API_ENDPOINT_URL = 'http://10.168.2.115:8080/backend/services/users';
 
   usernameEmitter = new Subject<string>();
   private loggedUser: User;
@@ -19,13 +19,14 @@ export class UserService {
   }
 
   setExternalUser() {
-    this.loggedUser = new User('Unknown', false, 'TODO');
+    this.loggedUser = new User('Unknown', false, 'TODO', 'TODO');
   }
 
   setUser(newUser: User) {
     this.loggedUser.setUsername(newUser.getUsername());
     this.loggedUser.setLogInfo(newUser.getLogInfo());
     this.loggedUser.setUuid(newUser.getUuid());
+    this.loggedUser.setChUUID(newUser.getChUUID());
   }
 
   getUser(): User {

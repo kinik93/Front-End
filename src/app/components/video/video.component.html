@@ -8,7 +8,7 @@
           <li class="list-group-item mr-2"
               style="display: inline-block; width: 40vw;"
               alt="ciao"
-              (click)="onVideoClick(video.getUUId(), i)">
+              (click)="onVideoClick(video.getUUId(), i, video.getChannelUUId())">
               {{video.getTitle()}}
           </li>
           <div *ngIf="searchedVideo.getVideoInfo(i)">
@@ -23,11 +23,13 @@
                   <button *ngIf="!searchedVideo.getSubscribe(i)"
                           style="padding: 18px 32px; font-size: 16pt;"
                           type="button"
+                          [disabled]="searchedVideo.getIsSubscribable(i)"
                           class="btn btn-outline-danger"
                           (click)="onSubscribeClick(video.getChannelUUId(), i)">Subscribe</button>
                   <button *ngIf="searchedVideo.getSubscribe(i)"
                           style="padding: 18px 32px; font-size: 16pt;"
                           type="button"
+                          [disabled]="searchedVideo.getIsSubscribable(i)"
                           class="btn btn-outline-danger"
                           (click)="onSubscribeClick(video.getChannelUUId(), i)">Unsubscribe</button>
                 </div>

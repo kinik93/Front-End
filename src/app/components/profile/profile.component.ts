@@ -95,6 +95,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
       this.videoService.uploadVideo(this.videoTitle,
                                     this.videoDescription,
                                     this.userService.getUser().getUuid());
+      this.videoTitle = '';
+      this.videoDescription = '';
     } else {
       alert('You must be logged to upload a video');
     }

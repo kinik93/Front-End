@@ -43,15 +43,20 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  onVideoClick(videoUuid: string, index: number) {
+  onVideoClick(videoUuid: string, index: number, chUUID: string) {
     this.homeVideo.changeVideoInfo(index);
     console.log('Video clicked: ', videoUuid);
     if (this.userService.getUser().getLogInfo()) {
-      this.videoService.getVideoInfoLoggedUser(videoUuid).subscribe( resData => {
-        console.log(resData);
-        (resData['subscribe'] === 'true') ? this.homeVideo.setSubscribe(index, true) : this.homeVideo.setSubscribe(index, false);
-        (resData['like'] === 'true') ? this.homeVideo.setLike(index, 'blue') : this.homeVideo.setLike(index, 'black');
-      });
+      console.log(this.userService.getUser().getChUUID(), chUUID);
+      if (this.userService.getUser().getChUUID() === chUUID) {
+        this.homeVideo.setIsSubscribable(index, true);
+      } else {
+        this.videoService.getVideoInfoLoggedUser(videoUuid).subscribe( resData => {
+          console.log(resData);
+          (resData['subscribe'] === 'true') ? this.homeVideo.setSubscribe(index, true) : this.homeVideo.setSubscribe(index, false);
+          (resData['like'] === 'true') ? this.homeVideo.setLike(index, 'blue') : this.homeVideo.setLike(index, 'black');
+        });
+      }
     } else {
       this.videoService.getVideoInfoExtUser(videoUuid).subscribe(resData => {
         console.log(resData);
@@ -60,9 +65,14 @@ export class HomeComponent implements OnInit {
   }
 
   onChannelClick(channelUUId: string) {
-    this.videoService.setChannelSelected(channelUUId);
-    this.videoService.getChannelVideos();
-    this.router.navigate(['channel']);
+    if (this.userService.getUser().getChUUID() === channelUUId) {
+      this.videoService.getProfileVideos();
+      this.router.navigate(['profile']);
+    } else {
+      this.videoService.setChannelSelected(channelUUId);
+      this.videoService.getChannelVideos();
+      this.router.navigate(['channel']);
+    }
   }
 
   onCommentSave(videoUUID: string, index: number) {
