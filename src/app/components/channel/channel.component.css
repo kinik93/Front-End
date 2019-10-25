@@ -21,3 +21,15 @@ i {
   border-radius: 8px;
   color: white;
 }
+
+.videoStyle{
+  margin-left: 3vw;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+}
+
+li {
+  display: inline-block;
+  width: 40vw;
+  padding: 5px;
+}

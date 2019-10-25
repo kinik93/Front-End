@@ -5,19 +5,20 @@
       <ul class="list-group">
         <div *ngFor="let video of homeVideo.getVideos(); let i = index" [attr.data-index]="i">
           <i  class="fas fa-user"
-              title="View the user channel"
+              [title]="video.getChannelUUId()"
               (click)="onChannelClick(video.getChannelUUId())"></i>
-          <li class="list-group-item mr-2"
-              style="display: inline-block; width: 40vw;"
+          <li class="list-group-item"
+              style="border-radius: 4px;"
               alt="ciao"
               (click)="onVideoClick(video.getUUId(), i, video.getChannelUUId())">
               {{video.getTitle()}}
           </li>
           <div *ngIf="homeVideo.getVideoInfo(i)">
             <div class="videoStyle">
-              <img  src="../../assets/video.jpeg"
-                  class="img-fluid"
-                  [title]="video.getDescription()">
+              <img  src="../../assets/video3.png"
+                    style="width:38vw;height:44vh;"
+                    class="img-fluid"
+                    [title]="video.getDescription()">
               <div style="margin-bottom: 8px;">
                 <i  [ngStyle]="{color: homeVideo.getLike(i)}"
                     class="fas fa-thumbs-up mr-4"
@@ -44,11 +45,11 @@
         </div>
       </ul>
     </div>
-    <div class="col-3">
+    <div class="col-3 text-center">
       <h5>Advertisements</h5>
       <div>
-        <img src="../../assets/video.jpeg" class="img-thumbnail">
-        <img src="../../assets/video.jpeg" class="img-thumbnail mt-3">
+        <img src="../../assets/adsPlaceholder.jpg" class="img-thumbnail mb-5">
+        <img src="../../assets/adsPlaceholder.jpg" class="img-thumbnail">
       </div>
     </div>
   </div>

@@ -6,8 +6,8 @@
           <div class="container-fluid">
             <div class="row flex-row flex-nowrap">
               <div *ngFor="let channel of myChannelList">
-                <div  class="card"
-                      style="width: 5vw; padding: 1px; cursor: pointer;"
+                <div  class="card ml-3"
+                      style="width: 5vw; padding: 1px; cursor: pointer; border-radius: 4px;"
                       (click)="onChannelClick(channel.chUUID)">
                   <img src="../../../assets/USER-LOGO.png" class="card-img-top">
                   {{channel.chUUID | slice:0:5}}...
@@ -21,17 +21,18 @@
           <ul class="list-group">
             <div *ngFor="let video of myVideos.getVideos(); let i = index" [attr.data-index]="i">
               <li class="list-group-item mr-2"
-                  style="display: inline-block; width: 40vw;"
+                  style="border-radius: 4px;"
                   alt="ciao"
                   (click)="onVideoClick(video.getUUId(), i)">
                   {{video.getTitle()}}
               </li>
               <div *ngIf="myVideos.getVideoInfo(i)">
                 <div class="videoStyle">
-                  <img  src="../../assets/video.jpeg"
+                  <img  src="../../assets/video3.png"
+                        style="width:38vw;height:44vh;"
                         class="img-fluid"
                         [title]="video.getDescription()">
-                  <div>
+                  <div style="margin-bottom: 8px;">
                     <i  [ngStyle]="{color: myVideos.getLike(i)}"
                         class="fas fa-thumbs-up mr-4"
                         (click)="onLikeClick(video.getUUId(), i)">

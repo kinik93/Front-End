@@ -7,17 +7,18 @@
           <ul class="list-group">
             <div *ngFor="let video of loadedVideo.getVideos(); let i = index" [attr.data-index]="i">
               <li class="list-group-item mr-2"
-                  style="display: inline-block; width: 40vw;"
+                  style="border-radius: 4px;"
                   alt="ciao"
                   (click)="onVideoClick(video.getUUId(), i, video.getChannelUUId())">
                   {{video.getTitle()}}
               </li>
               <div *ngIf="loadedVideo.getVideoInfo(i)">
                 <div class="videoStyle">
-                  <img  src="../../assets/video.jpeg"
+                  <img  src="../../assets/video3.png"
+                        style="width:38vw;height:44vh;"
                         class="img-fluid"
                         [title]="video.getDescription()">
-                  <div>
+                  <div style="margin-bottom: 8px;">
                     <i  [ngStyle]="{color: loadedVideo.getLike(i)}"
                         class="fas fa-thumbs-up mr-4"
                         (click)="onLikeClick(video.getUUId(), i)">
@@ -46,7 +47,12 @@
           </ul>
         </div>
       </div>
-      <div class="col-4 text-center">
+      <div class="col-3 text-center">
+        <h5>Advertisements</h5>
+        <div>
+          <img src="../../assets/adsPlaceholder.jpg" class="img-thumbnail mb-5">
+          <img src="../../assets/adsPlaceholder.jpg" class="img-thumbnail">
+        </div>
       </div>
     </div>
   </div>
