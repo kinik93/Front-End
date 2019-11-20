@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, SecurityContext } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
@@ -6,6 +6,9 @@ import { VideoService } from '../../services/video.service';
 import { Video } from 'src/app/model/video.model';
 import { ListVideo } from 'src/app/model/ListVideo.model';
 import { UserService } from 'src/app/services/user.service';
+import { DatasetService } from 'src/app/services/dataset.service';
+
+import { DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-home',
@@ -19,7 +22,9 @@ export class HomeComponent implements OnInit {
 
   constructor(private videoService: VideoService,
               private userService: UserService,
-              private router: Router) { }
+              private router: Router,
+              private datasetService: DatasetService,
+              private sanitizer: DomSanitizer) { }
 
   ngOnInit() {
     this.getRandomVideos();
@@ -46,21 +51,23 @@ export class HomeComponent implements OnInit {
   onVideoClick(videoUuid: string, index: number, chUUID: string) {
     this.homeVideo.changeVideoInfo(index);
     console.log('Video clicked: ', videoUuid);
-    if (this.userService.getUser().getLogInfo()) {
-      console.log(this.userService.getUser().getChUUID(), chUUID);
-      if (this.userService.getUser().getChUUID() === chUUID) {
-        this.homeVideo.setIsSubscribable(index, true);
+    if (this.homeVideo.getVideoInfo(index)) {
+      if (this.userService.getUser().getLogInfo()) {
+        console.log(this.userService.getUser().getChUUID(), chUUID);
+        if (this.userService.getUser().getChUUID() === chUUID) {
+          this.homeVideo.setIsSubscribable(index, true);
+        } else {
+          this.videoService.getVideoInfoLoggedUser(videoUuid).subscribe( resData => {
+            console.log(resData);
+            (resData['subscribe'] === 'true') ? this.homeVideo.setSubscribe(index, true) : this.homeVideo.setSubscribe(index, false);
+            (resData['like'] === 'true') ? this.homeVideo.setLike(index, 'blue') : this.homeVideo.setLike(index, 'black');
+          });
+        }
       } else {
-        this.videoService.getVideoInfoLoggedUser(videoUuid).subscribe( resData => {
+        this.videoService.getVideoInfoExtUser(videoUuid).subscribe(resData => {
           console.log(resData);
-          (resData['subscribe'] === 'true') ? this.homeVideo.setSubscribe(index, true) : this.homeVideo.setSubscribe(index, false);
-          (resData['like'] === 'true') ? this.homeVideo.setLike(index, 'blue') : this.homeVideo.setLike(index, 'black');
         });
       }
-    } else {
-      this.videoService.getVideoInfoExtUser(videoUuid).subscribe(resData => {
-        console.log(resData);
-      });
     }
   }
 

@@ -14,10 +14,15 @@
               </li>
               <div *ngIf="loadedVideo.getVideoInfo(i)">
                 <div class="videoStyle">
-                  <img  src="../../assets/video3.png"
-                        style="width:38vw;height:44vh;"
-                        class="img-fluid"
-                        [title]="video.getDescription()">
+                  <iframe
+                    width="560"
+                    height="315"
+                    style="padding: 0; margin: 0;"
+                    [src]="video.getDescription() | safe"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                  </iframe>
                   <div style="margin-bottom: 8px;">
                     <i  [ngStyle]="{color: loadedVideo.getLike(i)}"
                         class="fas fa-thumbs-up mr-4"

@@ -13,6 +13,8 @@ import { LoginComponent } from './components/login/login.component';
 
 import { FormsModule } from '@angular/forms';
 
+import { SafePipe } from './components/safe.pipe';
+
 const appRoutes: Routes = [
   { path: '', component: HomeComponent},
   { path: 'profile', component: ProfileComponent},
@@ -29,7 +31,8 @@ const appRoutes: Routes = [
     ProfileComponent,
     VideoComponent,
     ChannelComponent,
-    LoginComponent
+    LoginComponent,
+    SafePipe
   ],
   imports: [
     BrowserModule,

@@ -13,36 +13,44 @@
           </li>
           <div *ngIf="searchedVideo.getVideoInfo(i)">
             <div class="videoStyle">
-              <img  src="../../assets/video3.png"
-                    style="width:38vw;height:44vh;"
-                    class="img-fluid"
-                    [title]="video.getDescription()">
-                <div style="margin-bottom: 8px;">
-                  <i  [ngStyle]="{color: searchedVideo.getLike(i)}"
-                      class="fas fa-thumbs-up mr-4"
-                      (click)="onLikeClick(video.getUUId(), i)"></i>
-                  <button *ngIf="!searchedVideo.getSubscribe(i)"
-                          style="padding: 18px 32px; font-size: 16pt;"
-                          type="button"
-                          [disabled]="searchedVideo.getIsSubscribable(i)"
-                          class="btn btn-outline-danger"
-                          (click)="onSubscribeClick(video.getChannelUUId(), i)">Subscribe</button>
-                  <button *ngIf="searchedVideo.getSubscribe(i)"
-                          style="padding: 18px 32px; font-size: 16pt;"
-                          type="button"
-                          [disabled]="searchedVideo.getIsSubscribable(i)"
-                          class="btn btn-outline-danger"
-                          (click)="onSubscribeClick(video.getChannelUUId(), i)">Unsubscribe</button>
-                </div>
-                <input type="text" style="display: inline-block;" class="form-control w-50" placeholder="Comment" [(ngModel)]="searchedVideo.getComments()[i]">
-                <input  class="btn btn-outline-primary btn-lg mb-1"
+              <iframe
+                width="560"
+                height="315"
+                style="padding: 0; margin: 0;"
+                [src]="video.getDescription() | safe"
+                frameborder="0"
+                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+              </iframe>
+              <div style="margin-bottom: 8px;">
+                <i  [ngStyle]="{color: searchedVideo.getLike(i)}"
+                    class="fas fa-thumbs-up mr-4"
+                    (click)="onLikeClick(video.getUUId(), i)"></i>
+                <button *ngIf="!searchedVideo.getSubscribe(i)"
+                        style="padding: 18px 32px; font-size: 16pt;"
                         type="button"
-                        value="Save"
-                        (click)="onCommentSave(video.getUUId(), i)">
+                        [disabled]="searchedVideo.getIsSubscribable(i)"
+                        class="btn btn-outline-danger"
+                        (click)="onSubscribeClick(video.getChannelUUId(), i)">Subscribe</button>
+                <button *ngIf="searchedVideo.getSubscribe(i)"
+                        style="padding: 18px 32px; font-size: 16pt;"
+                        type="button"
+                        [disabled]="searchedVideo.getIsSubscribable(i)"
+                        class="btn btn-outline-danger"
+                        (click)="onSubscribeClick(video.getChannelUUId(), i)">Unsubscribe</button>
+              </div>
+              <input type="text" style="display: inline-block;" class="form-control w-50" placeholder="Comment" [(ngModel)]="searchedVideo.getComments()[i]">
+              <input  class="btn btn-outline-primary btn-lg mb-1"
+                      type="button"
+                      value="Save"
+                      (click)="onCommentSave(video.getUUId(), i)">
             </div>
           </div>
         </div>
       </ul>
+      <p *ngIf="searchedVideo.getVideos().length == 0">
+        No video matches the query
+      </p>
     </div>
     <div class="col-3 text-center">
         <h5>Advertisements</h5>

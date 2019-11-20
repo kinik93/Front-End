@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { ListVideo } from 'src/app/model/ListVideo.model';
 import { VideoService } from 'src/app/services/video.service';
 import { Subscription } from 'rxjs';
+import { DatasetService } from 'src/app/services/dataset.service';
 
 @Component({
   selector: 'app-profile',
@@ -23,7 +24,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   constructor(private userService: UserService,
               private router: Router,
-              private videoService: VideoService) { }
+              private videoService: VideoService,
+              private datasetService: DatasetService) { }
 
   // *******************
   // List video subscribing and operations
@@ -56,16 +58,19 @@ export class ProfileComponent implements OnInit, OnDestroy {
   onVideoClick(videoUuid: string, index: number) {
     this.myVideos.changeVideoInfo(index);
     console.log('Video clicked: ', videoUuid);
-    if (this.userService.getUser().getLogInfo()) {
-      this.videoService.getVideoInfoLoggedUser(videoUuid).subscribe( resData => {
-        console.log(resData);
-        (resData['subscribe'] === 'true') ? this.myVideos.setSubscribe(index, true) : this.myVideos.setSubscribe(index, false);
-        (resData['like'] === 'true') ? this.myVideos.setLike(index, 'blue') : this.myVideos.setLike(index, 'black');
-      });
-    } else {
-      this.videoService.getVideoInfoExtUser(videoUuid).subscribe(resData => {
-        console.log(resData);
-      });
+
+    if (this.myVideos.getVideoInfo(index)) {
+      if (this.userService.getUser().getLogInfo()) {
+        this.videoService.getVideoInfoLoggedUser(videoUuid).subscribe( resData => {
+          console.log(resData);
+          (resData['subscribe'] === 'true') ? this.myVideos.setSubscribe(index, true) : this.myVideos.setSubscribe(index, false);
+          (resData['like'] === 'true') ? this.myVideos.setLike(index, 'blue') : this.myVideos.setLike(index, 'black');
+        });
+      } else {
+        this.videoService.getVideoInfoExtUser(videoUuid).subscribe(resData => {
+          console.log(resData);
+        });
+      }
     }
   }
 

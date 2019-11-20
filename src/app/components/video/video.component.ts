@@ -4,6 +4,7 @@ import { ListVideo } from 'src/app/model/ListVideo.model';
 import { UserService } from 'src/app/services/user.service';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { DatasetService } from 'src/app/services/dataset.service';
 
 @Component({
   selector: 'app-video',
@@ -19,7 +20,8 @@ export class VideoComponent implements OnInit, OnDestroy {
 
   constructor(private videoService: VideoService,
               private userService: UserService,
-              private router: Router) {
+              private router: Router,
+              private datasetService: DatasetService) {
   }
 
   // *******************
@@ -45,20 +47,23 @@ export class VideoComponent implements OnInit, OnDestroy {
   onVideoClick(videoUuid: string, index: number, chUUID: string) {
     this.searchedVideo.changeVideoInfo(index);
     console.log('Video clicked: ', videoUuid);
-    if (this.userService.getUser().getLogInfo()) {
-      if (this.userService.getUser().getChUUID() === chUUID) {
-        this.searchedVideo.setIsSubscribable(index, true);
+    if (this.searchedVideo.getVideoInfo(index)) {
+      if (this.userService.getUser().getLogInfo()) {
+        if (this.userService.getUser().getChUUID() === chUUID) {
+          this.searchedVideo.setIsSubscribable(index, true);
+        } else {
+          this.videoService.getVideoInfoLoggedUser(videoUuid).subscribe( resData => {
+            console.log(resData);
+            (resData['subscribe'] === 'true') ? this.searchedVideo.setSubscribe(index, true) :
+                                                this.searchedVideo.setSubscribe(index, false);
+            (resData['like'] === 'true') ? this.searchedVideo.setLike(index, 'blue') : this.searchedVideo.setLike(index, 'black');
+          });
+        }
       } else {
-        this.videoService.getVideoInfoLoggedUser(videoUuid).subscribe( resData => {
+        this.videoService.getVideoInfoExtUser(videoUuid).subscribe(resData => {
           console.log(resData);
-          (resData['subscribe'] === 'true') ? this.searchedVideo.setSubscribe(index, true) : this.searchedVideo.setSubscribe(index, false);
-          (resData['like'] === 'true') ? this.searchedVideo.setLike(index, 'blue') : this.searchedVideo.setLike(index, 'black');
         });
       }
-    } else {
-      this.videoService.getVideoInfoExtUser(videoUuid).subscribe(resData => {
-        console.log(resData);
-      });
     }
   }
 

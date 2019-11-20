@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from 'src/app/services/user.service';
 import { Router } from '@angular/router';
 import { VideoService } from 'src/app/services/video.service';
+import { DatasetService } from 'src/app/services/dataset.service';
 
 @Component({
   selector: 'app-header',
@@ -9,14 +10,23 @@ import { VideoService } from 'src/app/services/video.service';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-
   usernameLog: string;
   private viewModal: boolean;
   inputSearch = '';
 
-  constructor(private userService: UserService,
-              private router: Router,
-              private videoService: VideoService) {
+  // ******
+  // Dataset variables
+  // ******
+  private dropdownToggle = false;
+  private scenarios = ['A', 'B', 'C'];
+  private stopButton = false;
+
+  constructor(
+    private userService: UserService,
+    private router: Router,
+    private videoService: VideoService,
+    private datasetService: DatasetService
+  ) {
     this.usernameLog = userService.getUser().getUsername();
   }
 
@@ -58,4 +68,19 @@ export class HeaderComponent implements OnInit {
     this.router.navigate(['video']);
   }
 
+  onDropMenuClick() {
+    this.dropdownToggle = !this.dropdownToggle;
+  }
+
+  onScenarioClick(scenario: string) {
+    console.log('Selected scenario: ', scenario);
+    this.datasetService.startScenario(scenario);
+    this.dropdownToggle = false;
+    this.stopButton = true;
+  }
+
+  onStopClick() {
+    this.datasetService.stopScenario();
+    this.stopButton = false;
+  }
 }
