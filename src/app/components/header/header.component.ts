@@ -18,7 +18,7 @@ export class HeaderComponent implements OnInit {
   // Dataset variables
   // ******
   private dropdownToggle = false;
-  private scenarios = ['A', 'B', 'C'];
+  private scenarios = ['A', 'B', 'C', 'D'];
   private stopButton = false;
 
   constructor(
@@ -57,7 +57,7 @@ export class HeaderComponent implements OnInit {
 
   onLogoutClick() {
     this.userService.setExternalUser();
-    this.userService.usernameEmitter.next('Unknown');
+    this.userService.usernameEmitter.next('EXTERNAL');
     this.viewModal = false;
     this.router.navigate(['']);
   }

@@ -15,24 +15,37 @@ export class ChannelComponent implements OnInit, OnDestroy {
 
   loadedVideo: ListVideo;
   readyLoadedVideo = false;
+  isSubscribed = false;
 
   loadedVideoSubscription: Subscription;
 
   constructor(private videoService: VideoService,
-              private router: Router,
-              private datasetService: DatasetService,
-              private userService: UserService) { }
+              private userService: UserService,
+              private router: Router) { }
 
   // *******************
   // List video subscribing and operations
   // *******************
 
   ngOnInit() {
+    if (this.videoService.getChannelSelected() === '') {
+      this.router.navigate(['/']);
+    }
+    if (this.videoService.getChannelSelected() === this.userService.getUser().getChUUID()) {
+      this.videoService.getProfileVideos();
+      this.router.navigate(['/profile']);
+    }
     this.loadedVideoSubscription = this.videoService.channelLoadedVideoEmitter.subscribe(resVideos => {
       this.loadedVideo = resVideos;
       this.readyLoadedVideo = true;
-      console.log('Loaded channel videos: ', this.loadedVideo);
     });
+
+    if (this.userService.getUser().getLogInfo()) {
+      this.videoService.checkSubscription(this.userService.getUser().getUuid(), this.videoService.getChannelSelected())
+            .subscribe(resData => {
+        (resData['subscribe'] === 'true') ? (this.isSubscribed = true) : (this.isSubscribed = false);
+      });
+    }
   }
 
   ngOnDestroy() {
@@ -82,9 +95,28 @@ export class ChannelComponent implements OnInit, OnDestroy {
     }
   }
 
+  onChannelSubscription(channelUUID) {
+    if (this.userService.getUser().getLogInfo()) {
+      this.videoService.subscribeOnChannel(channelUUID).subscribe(resData => {
+        this.isSubscribed = !this.isSubscribed;
+        this.videoService.updateAllSubscription(this.loadedVideo, this.isSubscribed, channelUUID);
+      }, error => {
+        console.log(error);
+      });
+    } else {
+      alert('You must be logged to subscribe to the channel');
+    }
+  }
+
   onSubscribeClick(channelUUID: string, index: number) {
     if (this.userService.getUser().getLogInfo()) {
-      this.videoService.subscribeOnChannel(channelUUID, this.loadedVideo, index);
+      this.videoService.subscribeOnChannel(channelUUID).subscribe(resData => {
+        this.loadedVideo.setSubscribe(index, !this.loadedVideo.getSubscribe(index));
+        this.videoService.updateAllSubscription(this.loadedVideo, this.loadedVideo.getSubscribe(index), channelUUID);
+        this.isSubscribed = this.loadedVideo.getSubscribe(index);
+      }, error => {
+        console.log(error);
+      });
     } else {
       alert('You must be logged to subscribe to the channel');
     }

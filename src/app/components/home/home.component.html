@@ -1,11 +1,15 @@
 <div class="container">
   <div class="row">
     <div class="col-9" *ngIf="ready">
-      <h3>Suggested video</h3>
+      <h3 style="padding-top: 8px;">Suggested video</h3>
+      <hr *ngIf="homeVideo.getVideos().length == 0" style="margin-right: 10%; margin-bottom: 0px;">
+      <p *ngIf="homeVideo.getVideos().length == 0">
+        No video available
+      </p>
       <ul class="list-group">
         <div *ngFor="let video of homeVideo.getVideos(); let i = index" [attr.data-index]="i">
           <i  class="fas fa-user"
-              [title]="video.getChannelUUId()"
+              [title]="video.getChannelName()"
               (click)="onChannelClick(video.getChannelUUId())"></i>
           <li class="list-group-item"
               style="border-radius: 4px;"
@@ -51,10 +55,10 @@
       </ul>
     </div>
     <div class="col-3 text-center">
-      <h5>Advertisements</h5>
+      <h5 style="padding-top: 8px;">Advertisements</h5>
       <div>
-        <img src="../../assets/adsPlaceholder.jpg" class="img-thumbnail mb-5">
-        <img src="../../assets/adsPlaceholder.jpg" class="img-thumbnail">
+        <img style="border-radius: 8px;" src="../../assets/adsPlaceholder.jpg" class="img-thumbnail mb-5">
+        <img style="border-radius: 8px;" src="../../assets/adsPlaceholder.jpg" class="img-thumbnail">
       </div>
     </div>
   </div>

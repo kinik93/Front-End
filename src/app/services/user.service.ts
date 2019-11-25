@@ -10,24 +10,25 @@ import { DatasetService } from './dataset.service';
 })
 export class UserService {
 
-  API_ENDPOINT_URL = 'http://10.168.2.115:8080/backend/services/users';
+  API_ENDPOINT_URL: string;
 
   usernameEmitter = new Subject<string>();
   private loggedUser: User;
 
   constructor(private http: HttpClient, private datasetService: DatasetService) {
+    this.API_ENDPOINT_URL = datasetService.API_ENDPOINT_URL;
     this.setExternalUser();
   }
 
   setExternalUser() {
-    this.loggedUser = new User('Unknown', false, 'TODO', 'TODO');
-    /*const logoutUrl = this.API_ENDPOINT_URL +
-                      'boh/logout' +
-                      '&id=' + this.datasetService.getTokenId() +
+    this.loggedUser = new User('EXTERNAL', false, 'TODO', 'TODO');
+    const logoutUrl = this.API_ENDPOINT_URL +
+                      '/logout?' +
+                      'id=' + this.datasetService.getTokenId() +
                       '&scenario=' + this.datasetService.getCurrentScenario();
     this.http.get(logoutUrl).subscribe(resData => {
       console.log(resData);
-    });*/
+    });
   }
 
   setUser(newUser: User) {
@@ -44,12 +45,25 @@ export class UserService {
   checkLogUser(username: string, password: string) {
     const md5 = new Md5();
     const userAuthUrl =  this.API_ENDPOINT_URL +
-                          '/login/?username=' + username +
+                          '/users/login/?username=' + username +
                           '&psw=' + md5.appendStr(password).end() +
                           '&id=' + this.datasetService.getTokenId() +
                           '&scenario=' + this.datasetService.getCurrentScenario();
     console.log(userAuthUrl);
     return this.http.get<User>(userAuthUrl);
+  }
+
+  signUpUser(username: string, password: string) {
+    const md5 = new Md5();
+    const userSignUpUrl = this.API_ENDPOINT_URL +
+                          '/signup/?' +
+                          'username=' + username +
+                          '&psw=' + md5.appendStr(password).end();
+    this.http.get(userSignUpUrl).subscribe(() => {
+      console.log('Registered a new user');
+    }, resError => {
+      console.log('Error: ', resError);
+    });
   }
 
 }

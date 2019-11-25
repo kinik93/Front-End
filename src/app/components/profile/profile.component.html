@@ -1,16 +1,19 @@
 <div class="container">
     <div class="row">
-      <div class="col">
+      <div class="col-8">
         <div>
           <h3>Channel subscribed</h3>
+          <p *ngIf="myChannelList.length == 0">
+            You are not subscribed to any channel
+          </p>
           <div class="container-fluid">
             <div class="row flex-row flex-nowrap">
               <div *ngFor="let channel of myChannelList">
-                <div  class="card ml-3"
+                <div  class="card ml-3 text-center"
                       style="width: 5vw; padding: 1px; cursor: pointer; border-radius: 4px;"
                       (click)="onChannelClick(channel.chUUID)">
                   <img src="../../../assets/USER-LOGO.png" class="card-img-top">
-                  {{channel.chUUID | slice:0:5}}...
+                  {{channel.chOwner | uppercase}}
                 </div>
               </div>
             </div>
@@ -18,14 +21,18 @@
         </div>
         <div *ngIf="readyMyVideos">
           <h3>My videos</h3>
+          <p *ngIf="myVideos.getVideos().length == 0">
+            No video uploaded
+          </p>
           <ul class="list-group">
             <div *ngFor="let video of myVideos.getVideos(); let i = index" [attr.data-index]="i">
               <li class="list-group-item mr-2"
-                  style="border-radius: 4px;"
+                  style="border-radius: 4px; width: 90%;"
                   alt="ciao"
                   (click)="onVideoClick(video.getUUId(), i)">
                   {{video.getTitle()}}
               </li>
+              <i class="fa fa fa-trash ml-2" (click)="onDeleteClick(video.getUUId())"></i>
               <div *ngIf="myVideos.getVideoInfo(i)">
                 <div class="videoStyle">
                   <iframe
@@ -56,7 +63,7 @@
       </div>
       <div class="col-4">
         <input class="form-control" type="text" placeholder="Video title" [(ngModel)]="videoTitle">
-        <textarea class="form-control mt-2" placeholder="Video description" rows="3" [(ngModel)]="videoDescription"></textarea>
+        <textarea class="form-control mt-2" placeholder="Insert the URL of the youtube video" rows="3" [(ngModel)]="videoDescription"></textarea>
         <button style="padding: 18px 32px; font-size: 16pt;"
                 type="button"
                 class="btn btn-outline-danger mt-4"

@@ -1,8 +1,7 @@
 <div class="backdrop"></div>
 <div class="win-box">
-  <p *ngIf="isLoading">Loading...</p>
   <div class="text-center">
-    <h3>Login</h3>
+    <h3>Create an account</h3>
   </div>
   <div>
     <div class="form-group">
@@ -10,7 +9,7 @@
       type="text"
       style="width: 85%; margin: auto;"
       [(ngModel)]="username"
-      (keydown.enter)="onLogin()"
+      (keydown.enter)="onRegisterClick()"
       (keydown.esc)="onCancelClick()"
       autofocus placeholder="Username">
     </div>
@@ -19,16 +18,13 @@
       type="password"
       style="width: 85%; margin: auto;"
       [(ngModel)]="password"
-      (keydown.enter)="onLogin()"
+      (keydown.enter)="onRegisterClick()"
       (keydown.esc)="onCancelClick()"
       autofocus placeholder="Password">
     </div>
     <div style="margin-left: 7.5%;">
-      <button type="submit" class="btn btn-primary mr-2" (click)="onLogin()">Login</button>
+      <button type="submit" class="btn btn-primary mr-2" (click)="onRegisterClick()">Sign up</button>
       <button class="btn btn-danger" (click)="onCancelClick()">Cancel</button>
     </div>
-    <hr style="width: 85%;">
-    <a routerLink="/signup" style="margin-left: 7.5%;" >Don't have an account yet?</a>
   </div>
 </div>
-

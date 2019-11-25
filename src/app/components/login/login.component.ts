@@ -3,7 +3,6 @@ import { UserService } from '../../services/user.service';
 import { User } from '../../model/user.model';
 import { Location } from '@angular/common';
 import { VideoService } from 'src/app/services/video.service';
-import { DatasetService } from 'src/app/services/dataset.service';
 
 @Component({
   selector: 'app-login',
@@ -18,8 +17,7 @@ export class LoginComponent implements OnInit {
 
   constructor(private userService: UserService,
               private videoService: VideoService,
-              private location: Location,
-              private datasetService: DatasetService) { }
+              private location: Location) { }
 
   ngOnInit() {
     this.isLoading = false;
@@ -40,12 +38,7 @@ export class LoginComponent implements OnInit {
           console.log('ok');
           this.userService.usernameEmitter.next(userLogged.getUsername());
           this.isLoading = false;
-        } else {
-          console.log('fail');
-          alert('Login failed');
-          this.isLoading = false;
         }
-
         this.goBack();
       },
       error => {

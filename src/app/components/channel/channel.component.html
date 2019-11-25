@@ -3,7 +3,19 @@
       <div class="col">
         <div *ngIf="readyLoadedVideo">
           <h1>Channel UUID: {{ videoService.getChannelSelected() | slice:0:12 }} ...</h1>
-          <h3>Loaded video</h3>
+          <h3 style="display: inline-block;">Loaded videos</h3>
+          <button *ngIf="isSubscribed"
+                  (click)="onChannelSubscription(videoService.getChannelSelected())"
+                  class="btn btn-outline-danger"
+                  style="padding: 18px 32px; font-size: 16pt; margin-left: 15vw;">
+            Unubscribe
+          </button>
+          <button *ngIf="!isSubscribed"
+                  (click)="onChannelSubscription(videoService.getChannelSelected())"
+                  class="btn btn-outline-danger"
+                  style="padding: 18px 32px; font-size: 16pt; margin-left: 15vw;">
+            Subscribe
+          </button>
           <ul class="list-group">
             <div *ngFor="let video of loadedVideo.getVideos(); let i = index" [attr.data-index]="i">
               <li class="list-group-item mr-2"
@@ -55,8 +67,8 @@
       <div class="col-3 text-center">
         <h5>Advertisements</h5>
         <div>
-          <img src="../../assets/adsPlaceholder.jpg" class="img-thumbnail mb-5">
-          <img src="../../assets/adsPlaceholder.jpg" class="img-thumbnail">
+          <img style="border-radius: 8px;" src="../../assets/adsPlaceholder.jpg" class="img-thumbnail mb-5">
+          <img style="border-radius: 8px;" src="../../assets/adsPlaceholder.jpg" class="img-thumbnail">
         </div>
       </div>
     </div>

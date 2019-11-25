@@ -98,8 +98,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   uploadVideo() {
     if (this.userService.getUser().getLogInfo()) {
       this.videoService.uploadVideo(this.videoTitle,
-                                    this.videoDescription,
-                                    this.userService.getUser().getUuid());
+                                    this.videoDescription.replace('watch?v=', 'embed/') + '?autoplay=1');
       this.videoTitle = '';
       this.videoDescription = '';
     } else {
@@ -111,7 +110,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.videoService.viewMyChannels(this.userService.getUser().getUuid())
     .subscribe(resCh => {
       for (const chItem of resCh) {
-        this.myChannelList.push({chUUID: chItem['uuid'], chOwner: chItem['owner']});
+        this.myChannelList.push({chUUID: chItem['uuid'], chOwner: chItem['owner']['username']});
       }
     }, error => {
       console.log(error);
@@ -122,5 +121,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.videoService.setChannelSelected(channelUUId);
     this.videoService.getChannelVideos();
     this.router.navigate(['channel']);
+  }
+
+  onDeleteClick(videoUUID: string) {
+    this.videoService.deleteVideo(videoUUID, this.userService.getUser().getUuid());
   }
 }

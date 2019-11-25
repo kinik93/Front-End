@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 import { Video } from '../model/video.model';
 import { UserService } from './user.service';
@@ -12,7 +13,7 @@ import { DatasetService } from './dataset.service';
   providedIn: 'root'
 })
 export class VideoService {
-  API_ENDPOINT_URL = 'http://10.168.2.115:8080/backend/services';
+  API_ENDPOINT_URL: string;
 
   private channelSelected: string;
   private inputSearchText: string;
@@ -21,11 +22,14 @@ export class VideoService {
   channelLoadedVideoEmitter = new Subject<ListVideo>();
   profileLoadedVideoEmitter = new Subject<ListVideo>();
 
-  constructor(
-    private http: HttpClient,
-    private userService: UserService,
-    private datasetService: DatasetService
-  ) {}
+  constructor(private http: HttpClient,
+              private userService: UserService,
+              private router: Router,
+              private datasetService: DatasetService) {
+    this.API_ENDPOINT_URL = datasetService.API_ENDPOINT_URL;
+    this.inputSearchText = '';
+    this.channelSelected = '';
+  }
 
   // Methods for setting variable passed between pages
 
@@ -81,7 +85,8 @@ export class VideoService {
                 item['uuid'],
                 item['name'],
                 item['videoDescriptor'],
-                item['channel']['uuid']
+                item['channel']['uuid'],
+                item['channel']['owner']['username']
               )
             );
           }
@@ -95,15 +100,13 @@ export class VideoService {
 
   getChannelVideos() {
     console.log('Ottieni video del canale: ', this.channelSelected);
-    const requestUrl = this.API_ENDPOINT_URL.concat(
+    let requestUrl = this.API_ENDPOINT_URL.concat(
       '/channel/viewchannel/?chUUID='
     )
       .concat(this.channelSelected)
       .concat('&id=' + this.datasetService.getTokenId());
     if (this.datasetService.getCurrentScenario() !== '') {
-      requestUrl.concat(
-        '&scenario=' + this.datasetService.getCurrentScenario()
-      );
+      requestUrl = requestUrl + '&scenario=' + this.datasetService.getCurrentScenario();
     }
     this.http
       .get<Video[]>(requestUrl)
@@ -116,7 +119,8 @@ export class VideoService {
                 item['uuid'],
                 item['name'],
                 item['videoDescriptor'],
-                item['channel']['uuid']
+                item['channel']['uuid'],
+                item['channel']['owner']['username']
               )
             );
           }
@@ -130,7 +134,7 @@ export class VideoService {
 
   getProfileVideos() {
     console.log('Ottieni video utente: ', this.userService.getUser());
-    const requestUrl =
+    let requestUrl =
       this.API_ENDPOINT_URL +
       '/channel/viewchannel/?' +
       'chUUID=' +
@@ -138,9 +142,7 @@ export class VideoService {
       '&id=' +
       this.datasetService.getTokenId();
     if (this.datasetService.getCurrentScenario() !== '') {
-      requestUrl.concat(
-        '&scenario=' + this.datasetService.getCurrentScenario()
-      );
+      requestUrl = requestUrl + '&scenario=' + this.datasetService.getCurrentScenario();
     }
     this.http
       .get<Video[]>(requestUrl)
@@ -153,7 +155,8 @@ export class VideoService {
                 item['uuid'],
                 item['name'],
                 item['videoDescriptor'],
-                item['channel']['uuid']
+                item['channel']['uuid'],
+                item['channel']['owner']['username']
               )
             );
           }
@@ -200,7 +203,7 @@ export class VideoService {
 
   saveLikeOnVideo(videoUUID: string, listVideo: ListVideo, index: number) {
     if (this.userService.getUser().getLogInfo()) {
-      const likeUrl =
+      let likeUrl =
         this.API_ENDPOINT_URL +
         '/videos/like/?videoUUID=' +
         videoUUID +
@@ -209,7 +212,7 @@ export class VideoService {
         '&id=' +
         this.datasetService.getTokenId();
       if (this.datasetService.getCurrentScenario() !== '') {
-        likeUrl.concat('&scenario=' + this.datasetService.getCurrentScenario());
+        likeUrl = likeUrl + '&scenario=' + this.datasetService.getCurrentScenario();
       }
       this.http.get(likeUrl).subscribe(
         resData => {
@@ -226,7 +229,7 @@ export class VideoService {
 
   saveCommentOnVideo(videoUUId: string, comment: string) {
     console.log('Saving ', comment, 'on video ', videoUUId);
-    const commentUrl =
+    let commentUrl =
       this.API_ENDPOINT_URL +
       '/videos/comment/?videoUUID=' +
       videoUUId +
@@ -237,9 +240,7 @@ export class VideoService {
       '&id=' +
       this.datasetService.getTokenId();
     if (this.datasetService.getCurrentScenario() !== '') {
-      commentUrl.concat(
-        '&scenario=' + this.datasetService.getCurrentScenario()
-      );
+      commentUrl = commentUrl + '&scenario=' + this.datasetService.getCurrentScenario();
     }
     this.http.get(commentUrl).subscribe(
       resData => {
@@ -251,8 +252,8 @@ export class VideoService {
     );
   }
 
-  subscribeOnChannel(chUUID: string, listVideo: ListVideo, index: number) {
-    const subscribeURL =
+  subscribeOnChannel(chUUID: string) {
+    let subscribeURL =
       this.API_ENDPOINT_URL +
       '/channel/subscribe/?chUUID=' +
       chUUID +
@@ -261,27 +262,36 @@ export class VideoService {
       '&id=' +
       this.datasetService.getTokenId();
     if (this.datasetService.getCurrentScenario() !== '') {
-      subscribeURL.concat(
-        '&scenario=' + this.datasetService.getCurrentScenario()
-      );
+      subscribeURL = subscribeURL + '&scenario=' + this.datasetService.getCurrentScenario();
     }
-    this.http.get(subscribeURL).subscribe(
-      resData => {
-        console.log(resData);
-        listVideo.setSubscribe(index, !listVideo.getSubscribe(index));
-      },
-      error => {
-        console.log(error);
+    return this.http.get(subscribeURL);
+  }
+
+  checkSubscription(userUUID: string, chUUID: string) {
+    const checksubUrl =
+    this.API_ENDPOINT_URL +
+    '/channel/checkSubscription?' +
+    'userUUID=' +
+    userUUID +
+    '&channelUUID=' +
+    chUUID;
+    return this.http.get(checksubUrl);
+  }
+
+  updateAllSubscription(listVideo: ListVideo, newSubscription: boolean, chUUID: string ) {
+    for (let i = 0 ; i < listVideo.getVideos().length; i++) {
+      if (listVideo.getVideo(i).getChannelUUId() === chUUID) {
+        listVideo.setSubscribe(i, newSubscription);
       }
-    );
+    }
   }
 
   // *****************
   // Profile functionalities
   // *****************
 
-  uploadVideo(videoName, videoDescriptor, userUUID) {
-    const uploadURL =
+  uploadVideo(videoName: string, videoDescriptor: string) {
+    let uploadURL =
       this.API_ENDPOINT_URL +
       '/channel/uploadvideo/?' +
       'videoname=' +
@@ -293,11 +303,12 @@ export class VideoService {
       '&id=' +
       this.datasetService.getTokenId();
     if (this.datasetService.getCurrentScenario() !== '') {
-      uploadURL.concat('&scenario=' + this.datasetService.getCurrentScenario());
+      uploadURL = uploadURL + '&scenario=' + this.datasetService.getCurrentScenario();
     }
     return this.http.get(uploadURL).subscribe(
       resData => {
         console.log(resData);
+        this.router.navigate(['/']);
       },
       error => {
         console.log(error);
@@ -309,7 +320,7 @@ export class VideoService {
   }
 
   viewMyChannels(userUUID: string) {
-    const listChUrl =
+    let listChUrl =
       this.API_ENDPOINT_URL +
       '/users/followedChannels/?' +
       'usrUUID=' +
@@ -317,8 +328,20 @@ export class VideoService {
       '&id=' +
       this.datasetService.getTokenId();
     if (this.datasetService.getCurrentScenario() !== '') {
-      listChUrl.concat('&scenario=' + this.datasetService.getCurrentScenario());
+      listChUrl = listChUrl + '&scenario=' + this.datasetService.getCurrentScenario();
     }
     return this.http.get<{ chUUID: string; chName: string }[]>(listChUrl);
+  }
+
+  deleteVideo(videoUUID: string, userUUID: string) {
+    const deleteVideoUrl =  this.API_ENDPOINT_URL +
+                          '/channel/deletevideo/?' +
+                          'usrUUID=' + userUUID +
+                          '&videoUUID=' + videoUUID +
+                          '&id=' + this.datasetService.getTokenId();
+    this.http.get(deleteVideoUrl).subscribe(() => {
+      console.log('Video deleted');
+      this.getProfileVideos();
+    });
   }
 }

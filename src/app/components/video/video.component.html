@@ -1,7 +1,11 @@
 <div class="container">
   <div class="row">
     <div class="col" *ngIf="ready">
-      <h3>Related video</h3>
+      <h3>Search results</h3>
+      <hr *ngIf="searchedVideo.getVideos().length == 0" style="margin-right: 10%; margin-bottom: 0px;">
+      <p *ngIf="searchedVideo.getVideos().length == 0">
+        No video matches the query
+      </p>
       <ul class="list-group">
         <div *ngFor="let video of searchedVideo.getVideos(); let i = index" [attr.data-index]="i">
           <i class="fas fa-user" title="View the user channel" (click)="onChannelClick(video.getChannelUUId())"></i>
@@ -48,15 +52,12 @@
           </div>
         </div>
       </ul>
-      <p *ngIf="searchedVideo.getVideos().length == 0">
-        No video matches the query
-      </p>
     </div>
     <div class="col-3 text-center">
         <h5>Advertisements</h5>
         <div>
-          <img src="../../assets/adsPlaceholder.jpg" class="img-thumbnail mb-5">
-          <img src="../../assets/adsPlaceholder.jpg" class="img-thumbnail">
+          <img style="border-radius: 8px;" src="../../assets/adsPlaceholder.jpg" class="img-thumbnail mb-5">
+          <img style="border-radius: 8px;" src="../../assets/adsPlaceholder.jpg" class="img-thumbnail">
         </div>
     </div>
   </div>

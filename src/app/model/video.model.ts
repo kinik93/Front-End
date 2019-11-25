@@ -3,12 +3,14 @@ export class Video {
   private title: string;
   private description: string;
   private channelUUId: string;
+  private channelName: string;
 
-  constructor(uuid: string, title: string, description: string, channelUUId: string) {
+  constructor(uuid: string, title: string, description: string, channelUUId: string, channelName: string) {
     this.uuid = uuid;
     this.title = title;
     this.description = description;
     this.channelUUId = channelUUId;
+    this.channelName = channelName;
   }
 
   getUUId() {
@@ -33,5 +35,13 @@ export class Video {
 
   getChannelUUId() {
     return this.channelUUId;
+  }
+
+  getChannelName() {
+    return this.channelName;
+  }
+
+  setChannelName(chName: string) {
+    this.channelName = chName;
   }
 }

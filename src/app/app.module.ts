@@ -14,13 +14,15 @@ import { LoginComponent } from './components/login/login.component';
 import { FormsModule } from '@angular/forms';
 
 import { SafePipe } from './components/safe.pipe';
+import { SignupComponent } from './components/signup/signup.component';
 
 const appRoutes: Routes = [
   { path: '', component: HomeComponent},
   { path: 'profile', component: ProfileComponent},
   { path: 'video', component: VideoComponent},
   { path: 'channel', component: ChannelComponent},
-  {path: 'login', component: LoginComponent}
+  { path: 'login', component: LoginComponent},
+  { path: 'signup', component: SignupComponent}
 ];
 
 @NgModule({
@@ -32,7 +34,8 @@ const appRoutes: Routes = [
     VideoComponent,
     ChannelComponent,
     LoginComponent,
-    SafePipe
+    SafePipe,
+    SignupComponent
   ],
   imports: [
     BrowserModule,

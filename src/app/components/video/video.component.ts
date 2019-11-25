@@ -20,8 +20,7 @@ export class VideoComponent implements OnInit, OnDestroy {
 
   constructor(private videoService: VideoService,
               private userService: UserService,
-              private router: Router,
-              private datasetService: DatasetService) {
+              private router: Router) {
   }
 
   // *******************
@@ -29,6 +28,9 @@ export class VideoComponent implements OnInit, OnDestroy {
   // *******************
 
   ngOnInit() {
+    if (this.videoService.getInputSearchText() === '') {
+      this.router.navigate(['/']);
+    }
     this.searchedVideoSubscription = this.videoService.searchedVideoEmitter.subscribe(resVideos => {
       this.searchedVideo = resVideos;
       this.ready = true;
@@ -97,7 +99,12 @@ export class VideoComponent implements OnInit, OnDestroy {
 
   onSubscribeClick(channelUUID: string, index: number) {
     if (this.userService.getUser().getLogInfo()) {
-      this.videoService.subscribeOnChannel(channelUUID, this.searchedVideo, index);
+      this.videoService.subscribeOnChannel(channelUUID).subscribe(resData => {
+        this.searchedVideo.setSubscribe(index, !this.searchedVideo.getSubscribe(index));
+        this.videoService.updateAllSubscription(this.searchedVideo, this.searchedVideo.getSubscribe(index), channelUUID);
+      }, error => {
+        console.log(error);
+      });
     } else {
       alert('You must be logged to subscribe to the channel');
     }
