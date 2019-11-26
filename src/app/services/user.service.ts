@@ -17,18 +17,20 @@ export class UserService {
 
   constructor(private http: HttpClient, private datasetService: DatasetService) {
     this.API_ENDPOINT_URL = datasetService.API_ENDPOINT_URL;
-    this.setExternalUser();
+    this.setExternalUser(false);
   }
 
-  setExternalUser() {
+  setExternalUser(sendRequestToLog: boolean) {
     this.loggedUser = new User('EXTERNAL', false, 'TODO', 'TODO');
-    const logoutUrl = this.API_ENDPOINT_URL +
-                      '/logout?' +
-                      'id=' + this.datasetService.getTokenId() +
-                      '&scenario=' + this.datasetService.getCurrentScenario();
-    this.http.get(logoutUrl).subscribe(resData => {
+    if (sendRequestToLog) {
+      const logoutUrl = this.API_ENDPOINT_URL +
+                        '/logout?' +
+                        'id=' + this.datasetService.getTokenId() +
+                        '&scenario=' + this.datasetService.getCurrentScenario();
+      this.http.get(logoutUrl).subscribe(resData => {
       console.log(resData);
-    });
+      });
+    }
   }
 
   setUser(newUser: User) {

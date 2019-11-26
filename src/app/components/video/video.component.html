@@ -8,7 +8,7 @@
       </p>
       <ul class="list-group">
         <div *ngFor="let video of searchedVideo.getVideos(); let i = index" [attr.data-index]="i">
-          <i class="fas fa-user" title="View the user channel" (click)="onChannelClick(video.getChannelUUId())"></i>
+          <i class="fas fa-user" [title]="video.getChannelName()" (click)="onChannelClick(video.getChannelUUId())"></i>
           <li class="list-group-item mr-2"
               style="border-radius: 4px;"
               alt="ciao"

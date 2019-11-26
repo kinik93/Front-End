@@ -15,8 +15,8 @@ import { DatasetService } from './dataset.service';
 export class VideoService {
   API_ENDPOINT_URL: string;
 
-  private channelSelected: string;
-  private inputSearchText: string;
+  private channelSelected = '';
+  private inputSearchText = '';
 
   searchedVideoEmitter = new Subject<ListVideo>();
   channelLoadedVideoEmitter = new Subject<ListVideo>();
@@ -27,8 +27,6 @@ export class VideoService {
               private router: Router,
               private datasetService: DatasetService) {
     this.API_ENDPOINT_URL = datasetService.API_ENDPOINT_URL;
-    this.inputSearchText = '';
-    this.channelSelected = '';
   }
 
   // Methods for setting variable passed between pages
@@ -64,72 +62,74 @@ export class VideoService {
   }
 
   searchVideos() {
-    console.log('Search for: ', this.inputSearchText);
-    let requestUrl = this.API_ENDPOINT_URL.concat('/videos/search?query=')
-      .concat(this.inputSearchText)
-      .concat('&id=' + this.datasetService.getTokenId());
-    if (this.datasetService.getCurrentScenario() !== '') {
-      requestUrl = requestUrl.concat(
-        '&scenario=' + this.datasetService.getCurrentScenario()
-      );
+    if (this.inputSearchText !== '') {
+      console.log('Search for: ', this.inputSearchText);
+      let requestUrl = this.API_ENDPOINT_URL.concat('/videos/search?query=')
+        .concat(this.inputSearchText)
+        .concat('&id=' + this.datasetService.getTokenId());
+      if (this.datasetService.getCurrentScenario() !== '') {
+        requestUrl = requestUrl.concat(
+          '&scenario=' + this.datasetService.getCurrentScenario()
+        );
+      }
+      console.log(requestUrl);
+      this.http.get<Video[]>(requestUrl)
+        .pipe(
+          map(resVideos => {
+            const videos = [];
+            for (const item of resVideos) {
+              videos.push(
+                new Video(
+                  item['uuid'],
+                  item['name'],
+                  item['videoDescriptor'],
+                  item['channel']['uuid'],
+                  item['channel']['owner']['username']
+                )
+              );
+            }
+            return videos;
+          })
+        )
+        .subscribe(resVideos => {
+          this.searchedVideoEmitter.next(new ListVideo(resVideos));
+        });
     }
-    console.log(requestUrl);
-    this.http
-      .get<Video[]>(requestUrl)
-      .pipe(
-        map(resVideos => {
-          const videos = [];
-          for (const item of resVideos) {
-            videos.push(
-              new Video(
-                item['uuid'],
-                item['name'],
-                item['videoDescriptor'],
-                item['channel']['uuid'],
-                item['channel']['owner']['username']
-              )
-            );
-          }
-          return videos;
-        })
-      )
-      .subscribe(resVideos => {
-        this.searchedVideoEmitter.next(new ListVideo(resVideos));
-      });
   }
 
   getChannelVideos() {
-    console.log('Ottieni video del canale: ', this.channelSelected);
-    let requestUrl = this.API_ENDPOINT_URL.concat(
-      '/channel/viewchannel/?chUUID='
-    )
-      .concat(this.channelSelected)
-      .concat('&id=' + this.datasetService.getTokenId());
-    if (this.datasetService.getCurrentScenario() !== '') {
-      requestUrl = requestUrl + '&scenario=' + this.datasetService.getCurrentScenario();
-    }
-    this.http
-      .get<Video[]>(requestUrl)
-      .pipe(
-        map(resVideos => {
-          const videos = [];
-          for (const item of resVideos) {
-            videos.push(
-              new Video(
-                item['uuid'],
-                item['name'],
-                item['videoDescriptor'],
-                item['channel']['uuid'],
-                item['channel']['owner']['username']
-              )
-            );
-          }
-          return videos;
-        })
+    if (this.channelSelected !== '') {
+      console.log('Get video from channel: ', this.channelSelected);
+      let requestUrl = this.API_ENDPOINT_URL.concat(
+        '/channel/viewchannel/?chUUID='
       )
-      .subscribe(resVideos => {
-        this.channelLoadedVideoEmitter.next(new ListVideo(resVideos));
-      });
+        .concat(this.channelSelected)
+        .concat('&id=' + this.datasetService.getTokenId());
+      if (this.datasetService.getCurrentScenario() !== '') {
+        requestUrl = requestUrl + '&scenario=' + this.datasetService.getCurrentScenario();
+      }
+      this.http.get<Video[]>(requestUrl)
+        .pipe(
+          map(resVideos => {
+            const videos = [];
+            for (const item of resVideos) {
+              videos.push(
+                new Video(
+                  item['uuid'],
+                  item['name'],
+                  item['videoDescriptor'],
+                  item['channel']['uuid'],
+                  item['channel']['owner']['username']
+                )
+              );
+            }
+            return videos;
+          })
+        )
+        .subscribe(resVideos => {
+          this.channelLoadedVideoEmitter.next(new ListVideo(resVideos));
+        });
+    }
   }
 
   getProfileVideos() {
@@ -144,8 +144,7 @@ export class VideoService {
     if (this.datasetService.getCurrentScenario() !== '') {
       requestUrl = requestUrl + '&scenario=' + this.datasetService.getCurrentScenario();
     }
-    this.http
-      .get<Video[]>(requestUrl)
+    this.http.get<Video[]>(requestUrl)
       .pipe(
         map(resVideos => {
           const videos = [];

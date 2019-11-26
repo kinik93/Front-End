@@ -56,7 +56,7 @@ export class HeaderComponent implements OnInit {
   }
 
   onLogoutClick() {
-    this.userService.setExternalUser();
+    this.userService.setExternalUser(true);
     this.userService.usernameEmitter.next('EXTERNAL');
     this.viewModal = false;
     this.router.navigate(['']);

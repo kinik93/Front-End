@@ -27,15 +27,13 @@ export class LoginComponent implements OnInit {
     if (this.userService.getUser().getLogInfo() === false) {
       this.isLoading = true;
       this.userService.checkLogUser(this.username, this.password).subscribe( tmpUserLogged => {
-        console.log(tmpUserLogged);
-        let userLogged =  new User(tmpUserLogged['username'],
+        const userLogged =  new User(tmpUserLogged['username'],
                                     tmpUserLogged['status'],
                                     tmpUserLogged['uuid'],
                                     tmpUserLogged['chUUID']);
         this.userService.setUser(userLogged);
-        console.log(userLogged.getLogInfo());
         if (userLogged.getLogInfo()) {
-          console.log('ok');
+          console.log('Log in successfull');
           this.userService.usernameEmitter.next(userLogged.getUsername());
           this.isLoading = false;
         }

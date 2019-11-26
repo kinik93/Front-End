@@ -6,9 +6,6 @@ import { VideoService } from '../../services/video.service';
 import { Video } from 'src/app/model/video.model';
 import { ListVideo } from 'src/app/model/ListVideo.model';
 import { UserService } from 'src/app/services/user.service';
-import { DatasetService } from 'src/app/services/dataset.service';
-
-import { DomSanitizer} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-home',

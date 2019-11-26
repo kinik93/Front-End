@@ -95,11 +95,11 @@ export class ChannelComponent implements OnInit, OnDestroy {
     }
   }
 
-  onChannelSubscription(channelUUID) {
+  onChannelSubscription() {
     if (this.userService.getUser().getLogInfo()) {
-      this.videoService.subscribeOnChannel(channelUUID).subscribe(resData => {
+      this.videoService.subscribeOnChannel(this.videoService.getChannelSelected()).subscribe(() => {
         this.isSubscribed = !this.isSubscribed;
-        this.videoService.updateAllSubscription(this.loadedVideo, this.isSubscribed, channelUUID);
+        this.videoService.updateAllSubscription(this.loadedVideo, this.isSubscribed, this.videoService.getChannelSelected());
       }, error => {
         console.log(error);
       });
