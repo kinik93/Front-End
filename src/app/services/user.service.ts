@@ -24,7 +24,7 @@ export class UserService {
     this.loggedUser = new User('EXTERNAL', false, 'TODO', 'TODO');
     if (sendRequestToLog) {
       const logoutUrl = this.API_ENDPOINT_URL +
-                        '/logout?' +
+                        '/users/logout?' +
                         'id=' + this.datasetService.getTokenId() +
                         '&scenario=' + this.datasetService.getCurrentScenario();
       this.http.get(logoutUrl).subscribe(resData => {
@@ -58,7 +58,7 @@ export class UserService {
   signUpUser(username: string, password: string) {
     const md5 = new Md5();
     const userSignUpUrl = this.API_ENDPOINT_URL +
-                          '/signup/?' +
+                          '/users/signup/?' +
                           'username=' + username +
                           '&psw=' + md5.appendStr(password).end();
     this.http.get(userSignUpUrl).subscribe(() => {

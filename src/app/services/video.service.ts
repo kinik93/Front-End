@@ -62,6 +62,7 @@ export class VideoService {
   }
 
   searchVideos() {
+    console.log("chiama")
     if (this.inputSearchText !== '') {
       console.log('Search for: ', this.inputSearchText);
       let requestUrl = this.API_ENDPOINT_URL.concat('/videos/search?query=')

@@ -28,14 +28,16 @@ export class LoginComponent implements OnInit {
       this.isLoading = true;
       this.userService.checkLogUser(this.username, this.password).subscribe( tmpUserLogged => {
         const userLogged =  new User(tmpUserLogged['username'],
-                                    tmpUserLogged['status'],
+                                    (tmpUserLogged['status'] === 'true'),
                                     tmpUserLogged['uuid'],
                                     tmpUserLogged['chUUID']);
-        this.userService.setUser(userLogged);
         if (userLogged.getLogInfo()) {
           console.log('Log in successfull');
           this.userService.usernameEmitter.next(userLogged.getUsername());
+          this.userService.setUser(userLogged);
           this.isLoading = false;
+        } else {
+          alert('Wrong username or password');
         }
         this.goBack();
       },
@@ -57,13 +59,12 @@ export class LoginComponent implements OnInit {
   }
 
   goBack() {
-    if (typeof this.videoService.getInputSearchText() !== "undefined") {
+    if (typeof this.videoService.getInputSearchText() !== 'undefined') {
       this.videoService.searchVideos();
     }
-    if (typeof this.videoService.getChannelSelected() !== "undefined") {
+    if (typeof this.videoService.getChannelSelected() !== 'undefined') {
       this.videoService.getChannelVideos();
     }
-
     this.location.back();
   }
 
