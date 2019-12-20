@@ -18,8 +18,8 @@ Run `ng build` to build the project. The build artifacts will be stored in the `
 | Package  |  Version | 
 |---|---|
 | Node.js | > 10.9.0 |
-| Angular  |  7 |  
-|  Bootstrap | 3  | 
+| Angular  |  8 |  
+|  Bootstrap | 4  | 
 
 * Install *Angular* with `npm install -g @angular/cli`
 * Install *Bootstrap* with `npm install --save bootstrap`
